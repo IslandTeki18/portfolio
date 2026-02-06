@@ -3,7 +3,9 @@
 
 @import "tailwindcss";
 
-@custom-variant dark (&:is(.dark *));
+@source ".";
+
+@custom-variant dark (prefers-color-scheme: dark);
 
 :root {
   /* Base Colors */
@@ -196,7 +198,8 @@
   --icon-operating-system: #0d0d0d;
 }
 
-.dark {
+@media (prefers-color-scheme: dark) {
+  :root {
   /* Dark Base Colors */
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -281,6 +284,7 @@
   --icon-disabled: #4d4d4d;
   --icon-background: #212529;
   --icon-operating-system: #ffffff;
+  }
 }
 
 @theme {
