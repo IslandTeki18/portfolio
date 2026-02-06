@@ -3,6 +3,8 @@
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src",
+    "lib": ["ES2015", "DOM"],
+    "target": "ES2015",
     "types": ["vite/client"]
   },
   "include": ["src"]
