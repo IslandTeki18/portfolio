@@ -65,27 +65,27 @@ Use this as a build checklist. Check items only when complete and verified.
 
 ### Portfolio routes
 
-- [ ] `/` Landing page scaffold with sections:
-  - [ ] Introduction (hardcoded)
-  - [ ] Projects (dynamic placeholder)
-  - [ ] Resume (dynamic placeholder)
-  - [ ] Businesses (dynamic placeholder)
-  - [ ] Contact (hardcoded + form placeholder)
-- [ ] `/projects/:slug` Project detail scaffold
-- [ ] `404` route and UI
-- [ ] Add route-level code splitting (if router supports)
+- [x] `/` Landing page scaffold with sections:
+  - [x] Introduction (hardcoded)
+  - [x] Projects (dynamic placeholder)
+  - [x] Resume (dynamic placeholder)
+  - [x] Businesses (dynamic placeholder)
+  - [x] Contact (hardcoded + form placeholder)
+- [x] `/projects/:slug` Project detail scaffold
+- [x] `404` route and UI
+- [x] Add route-level code splitting (if router supports)
 
 ### Admin routes
 
-- [ ] `/` dashboard placeholder
-- [ ] `/projects` list scaffold
-- [ ] `/projects/new` create scaffold
-- [ ] `/projects/:id` edit scaffold
-- [ ] `/resume` scaffold
-- [ ] `/businesses` list scaffold
-- [ ] `/businesses/new` create scaffold
-- [ ] `/businesses/:id` edit scaffold
-- [ ] Admin `404` route and UI
+- [x] `/` dashboard placeholder
+- [x] `/projects` list scaffold
+- [x] `/projects/new` create scaffold
+- [x] `/projects/:id` edit scaffold
+- [x] `/resume` scaffold
+- [x] `/businesses` list scaffold
+- [x] `/businesses/new` create scaffold
+- [x] `/businesses/:id` edit scaffold
+- [x] Admin `404` route and UI
 
 ---
 
@@ -93,10 +93,10 @@ Use this as a build checklist. Check items only when complete and verified.
 
 - [ ] Initialize Convex in `/convex`
 - [ ] Configure deployment + env vars for local + production
-- [ ] Add Convex client wiring in both apps:
-  - [ ] Shared `ConvexProvider` wrapper in `packages/lib`
-  - [ ] Typed `useQuery`/`useMutation` re-exports in `packages/lib`
-  - [ ] Providers added to both app roots
+- [x] Add Convex client wiring in both apps:
+  - [x] Shared `ConvexProvider` wrapper in `packages/lib`
+  - [x] Typed `useQuery`/`useMutation` re-exports in `packages/lib`
+  - [x] Providers added to both app roots
 - [ ] Verify both apps can call a simple test query
 
 ---
@@ -105,62 +105,62 @@ Use this as a build checklist. Check items only when complete and verified.
 
 ### Tables
 
-- [ ] `users`
-  - [ ] `authProviderId: string`
-  - [ ] `role: "admin"`
-  - [ ] `createdAt: number`
-- [ ] `projects`
-  - [ ] `title: string`
-  - [ ] `slug: string`
-  - [ ] `shortDescription: string`
-  - [ ] `longDescription?: string`
-  - [ ] `coverImageId?: Id<"_storage">`
-  - [ ] `galleryImageIds?: Id<"_storage">[]`
-  - [ ] `techStack?: string[]`
-  - [ ] `liveUrl?: string`
-  - [ ] `repoUrl?: string`
-  - [ ] `featured?: boolean`
-  - [ ] `status: "draft" | "published"`
-  - [ ] `sortOrder?: number`
-  - [ ] `tags?: string[]`
-  - [ ] `deletedAt?: number | null`
-  - [ ] `createdAt: number`
-  - [ ] `updatedAt: number`
-- [ ] `businesses`
-  - [ ] `name: string`
-  - [ ] `slug: string`
-  - [ ] `logoImageId?: Id<"_storage">`
-  - [ ] `shortDescription: string`
-  - [ ] `longDescription?: string`
-  - [ ] `websiteUrl?: string`
-  - [ ] `active: boolean`
-  - [ ] `featured?: boolean`
-  - [ ] `sortOrder?: number`
-  - [ ] `tags?: string[]`
-  - [ ] `deletedAt?: number | null`
-- [ ] `resume` (single doc model)
-  - [ ] `headline?: string`
-  - [ ] `summary?: string`
-  - [ ] `experience?: { company: string; role: string; start?: string; end?: string; bullets?: string[] }[]`
-  - [ ] `skills?: string[]`
-  - [ ] `education?: { school: string; degree?: string; year?: string }[]`
-  - [ ] `pdfStorageId?: Id<"_storage">`
-  - [ ] `updatedAt: number`
+- [x] `users`
+  - [x] `authProviderId: string`
+  - [x] `role: "admin"`
+  - [x] `createdAt: number`
+- [x] `projects`
+  - [x] `title: string`
+  - [x] `slug: string`
+  - [x] `shortDescription: string`
+  - [x] `longDescription?: string`
+  - [x] `coverImageId?: Id<"_storage">`
+  - [x] `galleryImageIds?: Id<"_storage">[]`
+  - [x] `techStack?: string[]`
+  - [x] `liveUrl?: string`
+  - [x] `repoUrl?: string`
+  - [x] `featured?: boolean`
+  - [x] `status: "draft" | "published"`
+  - [x] `sortOrder?: number`
+  - [x] `tags?: string[]`
+  - [x] `deletedAt?: number | null`
+  - [x] `createdAt: number`
+  - [x] `updatedAt: number`
+- [x] `businesses`
+  - [x] `name: string`
+  - [x] `slug: string`
+  - [x] `logoImageId?: Id<"_storage">`
+  - [x] `shortDescription: string`
+  - [x] `longDescription?: string`
+  - [x] `websiteUrl?: string`
+  - [x] `active: boolean`
+  - [x] `featured?: boolean`
+  - [x] `sortOrder?: number`
+  - [x] `tags?: string[]`
+  - [x] `deletedAt?: number | null`
+- [x] `resume` (single doc model)
+  - [x] `headline?: string`
+  - [x] `summary?: string`
+  - [x] `experience?: { company: string; role: string; start?: string; end?: string; bullets?: string[] }[]`
+  - [x] `skills?: string[]`
+  - [x] `education?: { school: string; degree?: string; year?: string }[]`
+  - [x] `pdfStorageId?: Id<"_storage">`
+  - [x] `updatedAt: number`
 
 ### Indexes
 
-- [ ] `projects.slug`
-- [ ] `projects.status + deletedAt`
-- [ ] `projects.deletedAt`
-- [ ] `businesses.slug`
-- [ ] `businesses.active + deletedAt`
-- [ ] `users.authProviderId`
+- [x] `projects.slug`
+- [x] `projects.status + deletedAt`
+- [x] `projects.deletedAt`
+- [x] `businesses.slug`
+- [x] `businesses.active + deletedAt`
+- [x] `users.authProviderId`
 
 ### Validation rules
 
-- [ ] Slug format enforced (kebab-case)
+- [x] Slug format enforced (kebab-case)
 - [ ] Slug uniqueness enforced (projects + businesses)
-- [ ] Required fields enforced (project title/slug/shortDescription, business name/slug/shortDescription)
+- [x] Required fields enforced (project title/slug/shortDescription, business name/slug/shortDescription)
 
 ---
 
