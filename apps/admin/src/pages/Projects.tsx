@@ -18,6 +18,9 @@ export default function Projects() {
           <CardContent>
             <div className="space-y-4">
               <Input label="Search" placeholder="Filter projects..." fullWidth />
+              <Link to="/projects/new">
+                <Button variant="primary">Create Project</Button>
+              </Link>
               <p className="text-label-secondary">No projects yet.</p>
             </div>
           </CardContent>

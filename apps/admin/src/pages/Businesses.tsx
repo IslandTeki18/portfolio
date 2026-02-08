@@ -22,6 +22,9 @@ export default function Businesses() {
                 placeholder="Filter businesses..."
                 fullWidth
               />
+              <Link to="/businesses/new">
+                <Button variant="primary">Create Business</Button>
+              </Link>
               <p className="text-label-secondary">No businesses yet.</p>
             </div>
           </CardContent>

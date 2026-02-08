@@ -183,6 +183,19 @@ importers:
         specifier: ^6.0.5
         version: 6.0.5(typescript@5.9.3)(vite@7.3.1(@types/node@24.10.11)(jiti@2.6.1)(lightningcss@1.30.2))
 
+  packages/backend:
+    dependencies:
+      convex:
+        specifier: ^1.31.7
+        version: 1.31.7(react@19.2.0)
+    devDependencies:
+      '@repo/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      typescript:
+        specifier: 5.9.2
+        version: 5.9.2
+
   packages/eslint-config:
     devDependencies:
       '@eslint/js':
@@ -221,6 +234,12 @@ importers:
 
   packages/lib:
     dependencies:
+      convex:
+        specifier: ^1.31.7
+        version: 1.31.7(react@19.2.0)
+      react:
+        specifier: ^19.2.0
+        version: 19.2.0
       zod:
         specifier: ^3.23.8
         version: 3.25.76
@@ -228,6 +247,9 @@ importers:
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
+      '@types/react':
+        specifier: ^19.2.0
+        version: 19.2.13
       typescript:
         specifier: 5.9.2
         version: 5.9.2

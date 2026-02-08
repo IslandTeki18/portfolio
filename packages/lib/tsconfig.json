@@ -5,6 +5,7 @@
     "rootDir": "src",
     "lib": ["ES2015", "DOM"],
     "target": "ES2015",
+    "jsx": "react-jsx",
     "types": ["vite/client"]
   },
   "include": ["src"]

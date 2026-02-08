@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { Button } from "@repo/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui/card";
-import { Spinner } from "@repo/ui/spinner";
+import { Input } from "@repo/ui/input";
+import { Textarea } from "@repo/ui/textarea";
 
 const projects = [
   { slug: "project-alpha", title: "Project Alpha" },
@@ -41,14 +42,49 @@ export default function Landing() {
 
         <Card>
           <CardHeader>
-            <CardTitle>UI Kit Demo</CardTitle>
+            <CardTitle>Resume</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-4">
-              <Button variant="primary">Primary</Button>
-              <Button variant="secondary">Secondary</Button>
-              <Spinner size="sm" />
-            </div>
+            <p className="text-label-secondary">
+              Resume content will be loaded here.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Businesses</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-label-secondary">
+              Businesses will be listed here.
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Contact</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+              <Input label="Name" placeholder="Your name" fullWidth />
+              <Input
+                label="Email"
+                type="email"
+                placeholder="you@example.com"
+                required
+                fullWidth
+              />
+              <Textarea
+                label="Message"
+                placeholder="Your message..."
+                rows={4}
+                required
+                fullWidth
+              />
+              <Button type="submit">Send Message</Button>
+            </form>
           </CardContent>
         </Card>
       </div>

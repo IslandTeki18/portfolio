@@ -11,9 +11,9 @@
     "strict": true,
     "isolatedModules": true,
     "paths": {
-      "@repo/lib/*": ["../packages/lib/src/*"]
+      "@repo/lib/*": ["../../lib/src/*"]
     }
   },
-  "include": ["./**/*"],
+  "include": ["./**/*", "../../lib/src/slug.ts"],
   "exclude": ["_generated"]
 }

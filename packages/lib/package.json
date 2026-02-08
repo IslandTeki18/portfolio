@@ -7,16 +7,20 @@
     "./env": "./src/env.ts",
     "./slug": "./src/slug.ts",
     "./url": "./src/url.ts",
-    "./date": "./src/date.ts"
+    "./date": "./src/date.ts",
+    "./convex": "./src/convex.tsx"
   },
   "scripts": {
     "check-types": "tsc --noEmit"
   },
   "dependencies": {
+    "convex": "^1.31.7",
+    "react": "^19.2.0",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
+    "@types/react": "^19.2.0",
     "typescript": "5.9.2",
     "vite": "^7.2.4"
   }

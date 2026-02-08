@@ -1,14 +1,25 @@
+import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
-import Landing from "./pages/Landing";
-import ProjectDetail from "./pages/ProjectDetail";
-import NotFound from "./pages/NotFound";
+import { Spinner } from "@repo/ui/spinner";
+
+const Landing = lazy(() => import("./pages/Landing"));
+const ProjectDetail = lazy(() => import("./pages/ProjectDetail"));
+const NotFound = lazy(() => import("./pages/NotFound"));
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Landing />} />
-      <Route path="/projects/:slug" element={<ProjectDetail />} />
-      <Route path="*" element={<NotFound />} />
-    </Routes>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center">
+          <Spinner size="lg" />
+        </div>
+      }
+    >
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/projects/:slug" element={<ProjectDetail />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </Suspense>
   );
 }
