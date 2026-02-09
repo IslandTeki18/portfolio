@@ -1,41 +1,38 @@
-import { ReactNode } from "react";
+import { ReactNode, forwardRef, HTMLAttributes } from "react";
+import { cn } from "./lib/utils";
 
-export interface EmptyStateProps {
+export interface EmptyStateProps extends HTMLAttributes<HTMLDivElement> {
   title: string;
   description?: string;
   icon?: ReactNode;
   action?: ReactNode;
-  className?: string;
 }
 
-export const EmptyState = ({
-  title,
-  description,
-  icon,
-  action,
-  className = "",
-}: EmptyStateProps) => {
-  return (
-    <div
-      className={`flex flex-col items-center justify-center py-12 px-4 text-center ${className}`.trim()}
-    >
-      {icon && (
-        <div className="mb-4 text-gray-400 dark:text-gray-600">
-          {icon}
-        </div>
-      )}
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-        {title}
-      </h3>
-      {description && (
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-6 max-w-sm">
-          {description}
-        </p>
-      )}
-      {action && <div>{action}</div>}
-    </div>
-  );
-};
+export const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(
+  ({ title, description, icon, action, className, ...props }, ref) => {
+    return (
+      <div
+        ref={ref}
+        className={cn(
+          "flex flex-col items-center justify-center py-12 px-4 text-center",
+          className
+        )}
+        {...props}
+      >
+        {icon && <div className="mb-4 text-muted-foreground">{icon}</div>}
+        <h3 className="text-lg font-semibold text-foreground mb-2">{title}</h3>
+        {description && (
+          <p className="text-sm text-muted-foreground mb-6 max-w-sm">
+            {description}
+          </p>
+        )}
+        {action && <div>{action}</div>}
+      </div>
+    );
+  }
+);
+
+EmptyState.displayName = "EmptyState";
 
 export const EmptyStateIcon = {
   Inbox: () => (

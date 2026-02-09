@@ -1,4 +1,15 @@
 import { InputHTMLAttributes, forwardRef } from "react";
+import { cn } from "./lib/utils";
+import {
+  generateFormId,
+  getAriaDescribedBy,
+  formInputBaseStyles,
+  formInputNormalStyles,
+  formInputErrorStyles,
+  formLabelStyles,
+  formErrorStyles,
+  formHelperStyles,
+} from "./lib/form-utils";
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -14,55 +25,42 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       error,
       helperText,
       fullWidth = false,
-      className = "",
+      className,
       id,
       ...props
     },
     ref
   ) => {
-    const inputId = id || label?.toLowerCase().replace(/\s+/g, "-");
+    const inputId = generateFormId(id, label);
     const hasError = Boolean(error);
-
-    const baseStyles = "px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100";
-    const normalStyles = "border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500";
-    const errorStyles = "border-red-500 focus:border-red-500 focus:ring-red-500";
-    const widthStyle = fullWidth ? "w-full" : "";
-
-    const combinedClassName = `${baseStyles} ${hasError ? errorStyles : normalStyles} ${widthStyle} ${className}`.trim();
 
     return (
       <div className={fullWidth ? "w-full" : ""}>
         {label && (
-          <label
-            htmlFor={inputId}
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-          >
+          <label htmlFor={inputId} className={formLabelStyles}>
             {label}
           </label>
         )}
         <input
           ref={ref}
           id={inputId}
-          className={combinedClassName}
+          className={cn(
+            formInputBaseStyles,
+            hasError ? formInputErrorStyles : formInputNormalStyles,
+            fullWidth && "w-full",
+            className
+          )}
           aria-invalid={hasError}
-          aria-describedby={
-            error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined
-          }
+          aria-describedby={getAriaDescribedBy(inputId, error, helperText)}
           {...props}
         />
         {error && (
-          <p
-            id={`${inputId}-error`}
-            className="mt-1 text-sm text-red-600 dark:text-red-400"
-          >
+          <p id={`${inputId}-error`} className={formErrorStyles}>
             {error}
           </p>
         )}
         {helperText && !error && (
-          <p
-            id={`${inputId}-helper`}
-            className="mt-1 text-sm text-gray-500 dark:text-gray-400"
-          >
+          <p id={`${inputId}-helper`} className={formHelperStyles}>
             {helperText}
           </p>
         )}

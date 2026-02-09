@@ -5,6 +5,8 @@ import {
   useCallback,
   ReactNode,
 } from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "./lib/utils";
 
 export type ToastType = "success" | "error" | "warning" | "info";
 
@@ -35,25 +37,40 @@ export interface ToastProviderProps {
   children: ReactNode;
 }
 
+/**
+ * Generates a unique ID for toast notifications.
+ * Uses crypto.randomUUID() if available, otherwise falls back to Math.random().
+ */
+function generateToastId(): string {
+  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  // Fallback for older browsers
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+}
+
 export const ToastProvider = ({ children }: ToastProviderProps) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
-
-  const addToast = useCallback((toast: Omit<Toast, "id">) => {
-    const id = Math.random().toString(36).substring(2, 9);
-    const newToast = { ...toast, id };
-    setToasts((prev) => [...prev, newToast]);
-
-    const duration = toast.duration ?? 3000;
-    if (duration > 0) {
-      setTimeout(() => {
-        removeToast(id);
-      }, duration);
-    }
-  }, []);
 
   const removeToast = useCallback((id: string) => {
     setToasts((prev) => prev.filter((toast) => toast.id !== id));
   }, []);
+
+  const addToast = useCallback(
+    (toast: Omit<Toast, "id">) => {
+      const id = generateToastId();
+      const newToast = { ...toast, id };
+      setToasts((prev) => [...prev, newToast]);
+
+      const duration = toast.duration ?? 3000;
+      if (duration > 0) {
+        setTimeout(() => {
+          removeToast(id);
+        }, duration);
+      }
+    },
+    [removeToast]
+  );
 
   return (
     <ToastContext.Provider value={{ toasts, addToast, removeToast }}>
@@ -78,19 +95,29 @@ const ToastContainer = ({ toasts, removeToast }: ToastContainerProps) => {
   );
 };
 
-interface ToastItemProps {
+const toastVariants = cva(
+  "flex items-start p-4 rounded-lg border-l-4 shadow-lg animate-slide-in",
+  {
+    variants: {
+      type: {
+        success: "bg-green-50 dark:bg-green-900 border-green-500 text-green-800 dark:text-green-100",
+        error: "bg-red-50 dark:bg-red-900 border-red-500 text-red-800 dark:text-red-100",
+        warning: "bg-yellow-50 dark:bg-yellow-900 border-yellow-500 text-yellow-800 dark:text-yellow-100",
+        info: "bg-blue-50 dark:bg-blue-900 border-blue-500 text-blue-800 dark:text-blue-100",
+      },
+    },
+    defaultVariants: {
+      type: "info",
+    },
+  }
+);
+
+interface ToastItemProps extends VariantProps<typeof toastVariants> {
   toast: Toast;
   onClose: () => void;
 }
 
 const ToastItem = ({ toast, onClose }: ToastItemProps) => {
-  const typeStyles = {
-    success: "bg-green-50 dark:bg-green-900 border-green-500 text-green-800 dark:text-green-100",
-    error: "bg-red-50 dark:bg-red-900 border-red-500 text-red-800 dark:text-red-100",
-    warning: "bg-yellow-50 dark:bg-yellow-900 border-yellow-500 text-yellow-800 dark:text-yellow-100",
-    info: "bg-blue-50 dark:bg-blue-900 border-blue-500 text-blue-800 dark:text-blue-100",
-  };
-
   const icons = {
     success: (
       <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
@@ -131,10 +158,7 @@ const ToastItem = ({ toast, onClose }: ToastItemProps) => {
   };
 
   return (
-    <div
-      className={`flex items-start p-4 rounded-lg border-l-4 shadow-lg ${typeStyles[toast.type]} animate-slide-in`}
-      role="alert"
-    >
+    <div className={cn(toastVariants({ type: toast.type }))} role="alert">
       <div className="flex-shrink-0">{icons[toast.type]}</div>
       <div className="ml-3 flex-1">
         <p className="text-sm font-medium">{toast.message}</p>
@@ -155,3 +179,9 @@ const ToastItem = ({ toast, onClose }: ToastItemProps) => {
     </div>
   );
 };
+
+export interface ToastProps {
+  type: ToastType;
+  message: string;
+  duration?: number;
+}

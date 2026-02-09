@@ -1,11 +1,25 @@
-import { type JSX } from "react";
+import { HTMLAttributes, forwardRef } from "react";
+import { cn } from "./lib/utils";
 
-export function Code({
-  children,
-  className,
-}: {
+export interface CodeProps extends HTMLAttributes<HTMLElement> {
   children: React.ReactNode;
-  className?: string;
-}): JSX.Element {
-  return <code className={className}>{children}</code>;
 }
+
+export const Code = forwardRef<HTMLElement, CodeProps>(
+  ({ children, className, ...props }, ref) => {
+    return (
+      <code
+        ref={ref}
+        className={cn(
+          "font-mono text-sm px-1.5 py-0.5 rounded bg-muted text-foreground",
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </code>
+    );
+  }
+);
+
+Code.displayName = "Code";

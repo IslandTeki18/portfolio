@@ -1,50 +1,59 @@
 import { ButtonHTMLAttributes, forwardRef } from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "./lib/utils";
 
-export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
-  size?: "sm" | "md" | "lg";
-  fullWidth?: boolean;
+const buttonVariants = cva(
+  "inline-flex items-center justify-center font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed",
+  {
+    variants: {
+      variant: {
+        primary: "bg-primary text-primary-foreground hover:bg-primary/90 focus:ring-primary",
+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/90 focus:ring-secondary",
+        outline: "border-2 border-border text-foreground hover:bg-accent focus:ring-ring",
+        ghost: "text-foreground hover:bg-accent focus:ring-ring",
+        danger: "bg-destructive text-destructive-foreground hover:bg-destructive/90 focus:ring-destructive",
+      },
+      size: {
+        sm: "px-3 py-1.5 text-sm rounded",
+        md: "px-4 py-2 text-base rounded-md",
+        lg: "px-6 py-3 text-lg rounded-lg",
+      },
+      fullWidth: {
+        true: "w-full",
+      },
+    },
+    defaultVariants: {
+      variant: "primary",
+      size: "md",
+      fullWidth: false,
+    },
+  }
+);
+
+export interface ButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
   isLoading?: boolean;
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
-      variant = "primary",
-      size = "md",
-      fullWidth = false,
+      variant,
+      size,
+      fullWidth,
       isLoading = false,
       disabled,
-      className = "",
+      className,
       children,
       ...props
     },
     ref
   ) => {
-    const baseStyles = "inline-flex items-center justify-center font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
-
-    const variantStyles = {
-      primary: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
-      secondary: "bg-gray-600 text-white hover:bg-gray-700 focus:ring-gray-500",
-      outline: "border-2 border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-gray-500 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-800",
-      ghost: "text-gray-700 hover:bg-gray-100 focus:ring-gray-500 dark:text-gray-200 dark:hover:bg-gray-800",
-      danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500",
-    };
-
-    const sizeStyles = {
-      sm: "px-3 py-1.5 text-sm rounded",
-      md: "px-4 py-2 text-base rounded-md",
-      lg: "px-6 py-3 text-lg rounded-lg",
-    };
-
-    const widthStyle = fullWidth ? "w-full" : "";
-
-    const combinedClassName = `${baseStyles} ${variantStyles[variant]} ${sizeStyles[size]} ${widthStyle} ${className}`.trim();
-
     return (
       <button
         ref={ref}
-        className={combinedClassName}
+        className={cn(buttonVariants({ variant, size, fullWidth, className }))}
         disabled={disabled || isLoading}
         {...props}
       >

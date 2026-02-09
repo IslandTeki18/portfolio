@@ -1,4 +1,15 @@
 import { TextareaHTMLAttributes, forwardRef } from "react";
+import { cn } from "./lib/utils";
+import {
+  generateFormId,
+  getAriaDescribedBy,
+  formInputBaseStyles,
+  formInputNormalStyles,
+  formInputErrorStyles,
+  formLabelStyles,
+  formErrorStyles,
+  formHelperStyles,
+} from "./lib/form-utils";
 
 export interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
@@ -14,55 +25,42 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       error,
       helperText,
       fullWidth = false,
-      className = "",
+      className,
       id,
       ...props
     },
     ref
   ) => {
-    const textareaId = id || label?.toLowerCase().replace(/\s+/g, "-");
+    const textareaId = generateFormId(id, label);
     const hasError = Boolean(error);
-
-    const baseStyles = "px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100";
-    const normalStyles = "border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500";
-    const errorStyles = "border-red-500 focus:border-red-500 focus:ring-red-500";
-    const widthStyle = fullWidth ? "w-full" : "";
-
-    const combinedClassName = `${baseStyles} ${hasError ? errorStyles : normalStyles} ${widthStyle} ${className}`.trim();
 
     return (
       <div className={fullWidth ? "w-full" : ""}>
         {label && (
-          <label
-            htmlFor={textareaId}
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-          >
+          <label htmlFor={textareaId} className={formLabelStyles}>
             {label}
           </label>
         )}
         <textarea
           ref={ref}
           id={textareaId}
-          className={combinedClassName}
+          className={cn(
+            formInputBaseStyles,
+            hasError ? formInputErrorStyles : formInputNormalStyles,
+            fullWidth && "w-full",
+            className
+          )}
           aria-invalid={hasError}
-          aria-describedby={
-            error ? `${textareaId}-error` : helperText ? `${textareaId}-helper` : undefined
-          }
+          aria-describedby={getAriaDescribedBy(textareaId, error, helperText)}
           {...props}
         />
         {error && (
-          <p
-            id={`${textareaId}-error`}
-            className="mt-1 text-sm text-red-600 dark:text-red-400"
-          >
+          <p id={`${textareaId}-error`} className={formErrorStyles}>
             {error}
           </p>
         )}
         {helperText && !error && (
-          <p
-            id={`${textareaId}-helper`}
-            className="mt-1 text-sm text-gray-500 dark:text-gray-400"
-          >
+          <p id={`${textareaId}-helper`} className={formHelperStyles}>
             {helperText}
           </p>
         )}

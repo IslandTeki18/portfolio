@@ -1,103 +1,121 @@
-import { ReactNode, useEffect, useRef } from "react";
+import { ReactNode, useEffect, useRef, forwardRef } from "react";
+import { createPortal } from "react-dom";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "./lib/utils";
 
-export interface ModalProps {
+const modalContentVariants = cva(
+  "relative w-full bg-card rounded-lg shadow-xl max-h-[90vh] overflow-auto",
+  {
+    variants: {
+      size: {
+        sm: "max-w-sm",
+        md: "max-w-md",
+        lg: "max-w-lg",
+        xl: "max-w-xl",
+      },
+    },
+    defaultVariants: {
+      size: "md",
+    },
+  }
+);
+
+export interface ModalProps extends VariantProps<typeof modalContentVariants> {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
   children: ReactNode;
-  size?: "sm" | "md" | "lg" | "xl";
   closeOnBackdropClick?: boolean;
   closeOnEscape?: boolean;
 }
 
-export const Modal = ({
-  isOpen,
-  onClose,
-  title,
-  children,
-  size = "md",
-  closeOnBackdropClick = true,
-  closeOnEscape = true,
-}: ModalProps) => {
-  const modalRef = useRef<HTMLDivElement>(null);
+export const Modal = forwardRef<HTMLDivElement, ModalProps>(
+  (
+    {
+      isOpen,
+      onClose,
+      title,
+      children,
+      size,
+      closeOnBackdropClick = true,
+      closeOnEscape = true,
+    },
+    ref
+  ) => {
+    const modalRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && closeOnEscape) {
+    useEffect(() => {
+      const handleEscape = (e: KeyboardEvent) => {
+        if (e.key === "Escape" && closeOnEscape) {
+          onClose();
+        }
+      };
+
+      if (isOpen) {
+        document.addEventListener("keydown", handleEscape);
+        document.body.style.overflow = "hidden";
+      }
+
+      return () => {
+        document.removeEventListener("keydown", handleEscape);
+        document.body.style.overflow = "unset";
+      };
+    }, [isOpen, onClose, closeOnEscape]);
+
+    if (!isOpen) return null;
+
+    const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+      if (closeOnBackdropClick && e.target === e.currentTarget) {
         onClose();
       }
     };
 
-    if (isOpen) {
-      document.addEventListener("keydown", handleEscape);
-      document.body.style.overflow = "hidden";
-    }
-
-    return () => {
-      document.removeEventListener("keydown", handleEscape);
-      document.body.style.overflow = "unset";
-    };
-  }, [isOpen, onClose, closeOnEscape]);
-
-  if (!isOpen) return null;
-
-  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (closeOnBackdropClick && e.target === e.currentTarget) {
-      onClose();
-    }
-  };
-
-  const sizeStyles = {
-    sm: "max-w-sm",
-    md: "max-w-md",
-    lg: "max-w-lg",
-    xl: "max-w-xl",
-  };
-
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50"
-      onClick={handleBackdropClick}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby={title ? "modal-title" : undefined}
-    >
+    const modalContent = (
       <div
-        ref={modalRef}
-        className={`relative w-full ${sizeStyles[size]} bg-white dark:bg-gray-800 rounded-lg shadow-xl max-h-[90vh] overflow-auto`}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50"
+        onClick={handleBackdropClick}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={title ? "modal-title" : undefined}
       >
-        {title && (
-          <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-            <h2
-              id="modal-title"
-              className="text-xl font-semibold text-gray-900 dark:text-gray-100"
-            >
-              {title}
-            </h2>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
-              aria-label="Close modal"
-            >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+        <div
+          ref={ref || modalRef}
+          className={cn(modalContentVariants({ size }))}
+        >
+          {title && (
+            <div className="flex items-center justify-between p-4 border-b border-border">
+              <h2 id="modal-title" className="text-xl font-semibold text-foreground">
+                {title}
+              </h2>
+              <button
+                onClick={onClose}
+                className="text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="Close modal"
               >
-                <path d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          </div>
-        )}
-        <div className="p-4">{children}</div>
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          )}
+          <div className="p-4">{children}</div>
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+
+    return createPortal(modalContent, document.body);
+  }
+);
+
+Modal.displayName = "Modal";
 
 export interface ModalHeaderProps {
   children: ReactNode;
@@ -106,9 +124,7 @@ export interface ModalHeaderProps {
 export const ModalHeader = ({ children }: ModalHeaderProps) => {
   return (
     <div className="mb-4">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-        {children}
-      </h3>
+      <h3 className="text-lg font-semibold text-foreground">{children}</h3>
     </div>
   );
 };
@@ -118,7 +134,7 @@ export interface ModalBodyProps {
 }
 
 export const ModalBody = ({ children }: ModalBodyProps) => {
-  return <div className="text-gray-700 dark:text-gray-300">{children}</div>;
+  return <div className="text-muted-foreground">{children}</div>;
 };
 
 export interface ModalFooterProps {
@@ -127,8 +143,6 @@ export interface ModalFooterProps {
 
 export const ModalFooter = ({ children }: ModalFooterProps) => {
   return (
-    <div className="mt-6 flex items-center justify-end gap-3">
-      {children}
-    </div>
+    <div className="mt-6 flex items-center justify-end gap-3">{children}</div>
   );
 };
