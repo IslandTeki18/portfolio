@@ -164,3 +164,30 @@ export const getBusinessById = query({
     return await ctx.db.get(args.id);
   },
 });
+
+/**
+ * Public: List all active businesses
+ * Excludes inactive and deleted businesses
+ * Sorted by sortOrder asc (nulls last)
+ */
+export const listPublishedBusinesses = query({
+  args: {},
+  handler: async (ctx) => {
+    const businesses = await ctx.db
+      .query("businesses")
+      .withIndex("by_active_deletedAt", (q) =>
+        q.eq("active", true).eq("deletedAt", null)
+      )
+      .collect();
+
+    // Sort by sortOrder ascending (nulls last)
+    return businesses.sort((a, b) => {
+      if (a.sortOrder !== undefined && b.sortOrder !== undefined) {
+        return a.sortOrder - b.sortOrder;
+      }
+      if (a.sortOrder !== undefined) return -1;
+      if (b.sortOrder !== undefined) return 1;
+      return 0;
+    });
+  },
+});

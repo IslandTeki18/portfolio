@@ -24,9 +24,18 @@ export const upsertMe = mutation({
       .map((id) => id.trim())
       .filter(Boolean);
 
+    // Debug: Log allowlist and user ID
+    console.log("Environment variable ADMIN_AUTH_PROVIDER_ID:", process.env.ADMIN_AUTH_PROVIDER_ID);
+    console.log("Parsed allowlist:", allowlist);
+    console.log("User identity.subject:", identity.subject);
+    console.log("Is user in allowlist?", allowlist.includes(identity.subject));
+
     if (!allowlist.includes(identity.subject)) {
+      console.log("User NOT in allowlist - returning null");
       return null;
     }
+
+    console.log("User IS in allowlist - creating admin user");
 
     return await ctx.db.insert("users", {
       authProviderId: identity.subject,

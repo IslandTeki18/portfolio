@@ -217,3 +217,53 @@ export const getProjectById = query({
     return await ctx.db.get(args.id);
   },
 });
+
+/**
+ * Public: List all published projects
+ * Excludes drafts and deleted projects
+ * Sorted by sortOrder asc (nulls last), then createdAt desc
+ */
+export const listPublishedProjects = query({
+  args: {},
+  handler: async (ctx) => {
+    const projects = await ctx.db
+      .query("projects")
+      .withIndex("by_status_deletedAt", (q) =>
+        q.eq("status", "published").eq("deletedAt", null)
+      )
+      .collect();
+
+    // Sort by sortOrder ascending (nulls last), then createdAt descending
+    return projects.sort((a, b) => {
+      if (a.sortOrder !== undefined && b.sortOrder !== undefined) {
+        return a.sortOrder - b.sortOrder;
+      }
+      if (a.sortOrder !== undefined) return -1;
+      if (b.sortOrder !== undefined) return 1;
+      return b.createdAt - a.createdAt;
+    });
+  },
+});
+
+/**
+ * Public: Get a single published project by slug
+ * Returns null if project is missing, draft, or deleted
+ */
+export const getPublishedProjectBySlug = query({
+  args: {
+    slug: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const project = await ctx.db
+      .query("projects")
+      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .first();
+
+    // Return null if missing, draft, or deleted
+    if (!project || project.status !== "published" || project.deletedAt !== null) {
+      return null;
+    }
+
+    return project;
+  },
+});

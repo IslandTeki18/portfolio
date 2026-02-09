@@ -71,3 +71,14 @@ export const getResume = query({
     return await ctx.db.query("resume").first();
   },
 });
+
+/**
+ * Public: Get the resume (singleton)
+ * Returns the first/only resume document or null
+ */
+export const getPublicResume = query({
+  args: {},
+  handler: async (ctx) => {
+    return await ctx.db.query("resume").first();
+  },
+});

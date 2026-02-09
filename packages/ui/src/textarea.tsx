@@ -27,6 +27,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
       fullWidth = false,
       className,
       id,
+      required,
       ...props
     },
     ref
@@ -39,6 +40,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label && (
           <label htmlFor={textareaId} className={formLabelStyles}>
             {label}
+            {required && <span className="text-destructive ml-1">*</span>}
           </label>
         )}
         <textarea
@@ -52,6 +54,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           )}
           aria-invalid={hasError}
           aria-describedby={getAriaDescribedBy(textareaId, error, helperText)}
+          required={required}
           {...props}
         />
         {error && (

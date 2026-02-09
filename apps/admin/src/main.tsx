@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { ClerkProvider, useAuth } from "@clerk/clerk-react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { ConvexReactClient } from "convex/react";
+import { ToastProvider } from "@repo/ui/toast";
 import "./index.css";
 import App from "./App";
 
@@ -14,7 +15,9 @@ createRoot(document.getElementById("root")!).render(
     <ClerkProvider publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}>
       <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
         <BrowserRouter>
-          <App />
+          <ToastProvider>
+            <App />
+          </ToastProvider>
         </BrowserRouter>
       </ConvexProviderWithClerk>
     </ClerkProvider>

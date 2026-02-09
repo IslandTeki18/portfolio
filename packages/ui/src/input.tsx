@@ -27,6 +27,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       fullWidth = false,
       className,
       id,
+      required,
       ...props
     },
     ref
@@ -39,6 +40,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label htmlFor={inputId} className={formLabelStyles}>
             {label}
+            {required && <span className="text-destructive ml-1">*</span>}
           </label>
         )}
         <input
@@ -52,6 +54,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           )}
           aria-invalid={hasError}
           aria-describedby={getAriaDescribedBy(inputId, error, helperText)}
+          required={required}
           {...props}
         />
         {error && (

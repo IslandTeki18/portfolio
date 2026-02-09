@@ -35,6 +35,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
       className,
       id,
       children,
+      required,
       ...props
     },
     ref
@@ -47,6 +48,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
         {label && (
           <label htmlFor={selectId} className={formLabelStyles}>
             {label}
+            {required && <span className="text-destructive ml-1">*</span>}
           </label>
         )}
         <select
@@ -60,6 +62,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           )}
           aria-invalid={hasError}
           aria-describedby={getAriaDescribedBy(selectId, error, helperText)}
+          required={required}
           {...props}
         >
           {children}
