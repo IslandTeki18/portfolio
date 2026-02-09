@@ -4,10 +4,11 @@ import {
   ConvexReactClient,
   useQuery,
   useMutation,
+  useAction,
   useConvex,
 } from "convex/react";
 
-export { useQuery, useMutation, useConvex, ConvexReactClient };
+export { useQuery, useMutation, useAction, useConvex, ConvexReactClient };
 
 interface ConvexClientProviderProps {
   client: ConvexReactClient;

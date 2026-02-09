@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { useQuery } from "@repo/lib/convex";
+import { useForm } from "react-hook-form";
+import { useQuery, useAction } from "@repo/lib/convex";
 import { api } from "@backend/_generated/api";
+import { useToast } from "@repo/ui/toast";
 import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui/card";
 import { Input } from "@repo/ui/input";
 import { Textarea } from "@repo/ui/textarea";
@@ -12,12 +14,54 @@ import BusinessCard from "../components/BusinessCard";
 import ResumePreview from "../components/ResumePreview";
 import ResumeModal from "../components/ResumeModal";
 
+interface ContactFormData {
+  name?: string;
+  email: string;
+  message: string;
+}
+
 export default function Landing() {
   const [isResumeModalOpen, setIsResumeModalOpen] = useState(false);
+  const { addToast } = useToast();
 
   const projects = useQuery(api.projects.listPublishedProjects);
   const businesses = useQuery(api.businesses.listPublishedBusinesses);
   const resume = useQuery(api.resume.getPublicResume);
+
+  const sendContactEmail = useAction(api.contact.sendContactEmail);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ContactFormData>();
+
+  const onSubmitContact = async (data: ContactFormData) => {
+    try {
+      await sendContactEmail({
+        name: data.name || undefined,
+        email: data.email,
+        message: data.message,
+      });
+
+      addToast({
+        type: "success",
+        message: "Message sent successfully! I'll get back to you soon.",
+        duration: 5000,
+      });
+
+      // Clear form on success
+      reset();
+    } catch (error) {
+      console.error("Failed to send contact email:", error);
+      addToast({
+        type: "error",
+        message: error instanceof Error ? error.message : "Failed to send message. Please try again.",
+        duration: 5000,
+      });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background-primary p-8">
@@ -102,23 +146,46 @@ export default function Landing() {
             <CardTitle>Let&apos;s Connect</CardTitle>
           </CardHeader>
           <CardContent>
-            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-              <Input label="Name" placeholder="Your name" fullWidth />
+            <form className="space-y-4" onSubmit={handleSubmit(onSubmitContact)}>
               <Input
+                {...register("name")}
+                label="Name"
+                placeholder="Your name (optional)"
+                fullWidth
+              />
+              <Input
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Please enter a valid email address",
+                  },
+                })}
                 label="Email"
                 type="email"
                 placeholder="you@example.com"
                 required
                 fullWidth
+                error={errors.email?.message}
               />
               <Textarea
+                {...register("message", {
+                  required: "Message is required",
+                  minLength: {
+                    value: 10,
+                    message: "Message must be at least 10 characters",
+                  },
+                })}
                 label="Message"
                 placeholder="Your message..."
                 rows={4}
                 required
                 fullWidth
+                error={errors.message?.message}
               />
-              <Button type="submit">Send Message</Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "Sending..." : "Send Message"}
+              </Button>
             </form>
           </CardContent>
         </Card>
