@@ -14,10 +14,9 @@ export default function Landing() {
     <div className="min-h-screen bg-background-primary p-8">
       <div className="mx-auto max-w-3xl space-y-8">
         <header className="space-y-2">
-          <h1 className="text-4xl font-bold text-label-primary">Portfolio</h1>
+          <h1 className="text-4xl font-bold text-label-primary">Landon McKell</h1>
           <p className="text-label-secondary">
-            Welcome to my portfolio. Built with React, TypeScript, and Tailwind
-            CSS v4.
+            Full Stack Web Developer & Mobile Developer
           </p>
         </header>
 
@@ -64,7 +63,7 @@ export default function Landing() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Contact</CardTitle>
+            <CardTitle>Let's Connect</CardTitle>
           </CardHeader>
           <CardContent>
             <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
