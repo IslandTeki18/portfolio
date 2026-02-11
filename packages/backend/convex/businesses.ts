@@ -112,6 +112,7 @@ export const updateBusiness = mutation({
 
 /**
  * Admin: Soft-delete a business by setting deletedAt
+ * Also deletes associated storage files (logo image)
  */
 export const softDeleteBusiness = mutation({
   args: {
@@ -120,6 +121,18 @@ export const softDeleteBusiness = mutation({
   handler: async (ctx, args) => {
     await requireAdmin(ctx);
 
+    // Fetch business to get storage IDs
+    const business = await ctx.db.get(args.id);
+    if (!business) {
+      throw new Error("Business not found");
+    }
+
+    // Delete logo from storage if exists
+    if (business.logoImageId) {
+      await ctx.storage.delete(business.logoImageId);
+    }
+
+    // Soft delete the business
     await ctx.db.patch(args.id, {
       deletedAt: Date.now(),
     });

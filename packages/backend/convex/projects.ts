@@ -125,6 +125,7 @@ export const updateProject = mutation({
 
 /**
  * Admin: Soft-delete a project by setting deletedAt
+ * Also deletes associated storage files (cover image and gallery images)
  */
 export const softDeleteProject = mutation({
   args: {
@@ -133,6 +134,25 @@ export const softDeleteProject = mutation({
   handler: async (ctx, args) => {
     await requireAdmin(ctx);
 
+    // Fetch project to get storage IDs
+    const project = await ctx.db.get(args.id);
+    if (!project) {
+      throw new Error("Project not found");
+    }
+
+    // Delete cover image from storage if exists
+    if (project.coverImageId) {
+      await ctx.storage.delete(project.coverImageId);
+    }
+
+    // Delete all gallery images from storage if exists
+    if (project.galleryImageIds && project.galleryImageIds.length > 0) {
+      for (const imageId of project.galleryImageIds) {
+        await ctx.storage.delete(imageId);
+      }
+    }
+
+    // Soft delete the project
     const now = Date.now();
     await ctx.db.patch(args.id, {
       deletedAt: now,
