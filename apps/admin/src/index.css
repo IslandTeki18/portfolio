@@ -1,1 +1,4 @@
 @import "../../../packages/ui/src/styles.css";
+
+/* Scan admin app source files for Tailwind classes */
+@source "../src";

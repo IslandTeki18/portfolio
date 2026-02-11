@@ -35,19 +35,6 @@ export default function Dashboard() {
             </Link>
           ))}
         </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>UI Kit Demo</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-4">
-              <Button variant="primary">Primary</Button>
-              <Button variant="secondary">Secondary</Button>
-              <Spinner size="sm" />
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

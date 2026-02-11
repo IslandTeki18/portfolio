@@ -345,47 +345,47 @@ Use this as a build checklist. Check items only when complete and verified.
 ## 11) File Storage Integration (Convex)
 
 ### Shared upload plumbing
-- [ ] Convex mutations to generate upload URL(s)
-- [ ] Client uploader utility:
-  - [ ] selects file
-  - [ ] requests upload URL
-  - [ ] uploads
-  - [ ] returns `storageId`
+- [x] Convex mutations to generate upload URL(s)
+- [x] Client uploader utility:
+  - [x] selects file
+  - [x] requests upload URL
+  - [x] uploads
+  - [x] returns `storageId`
 
 ### Projects: images
-- [ ] Mutations:
-  - [ ] `generateProjectImageUploadUrl()`
-  - [ ] `setProjectCoverImage(projectId, storageId)`
-  - [ ] `addProjectGalleryImage(projectId, storageId)`
-  - [ ] `removeProjectGalleryImage(projectId, storageId)`
-  - [ ] `reorderProjectGalleryImages(projectId, orderedIds)`
-- [ ] Admin UI:
-  - [ ] cover upload + preview
-  - [ ] gallery upload + previews
-  - [ ] remove image
-  - [ ] reorder gallery (simple up/down ok)
-- [ ] Portfolio:
-  - [ ] cover image renders on cards/details
-  - [ ] gallery renders on details
-  - [ ] images lazy load
+- [x] Mutations:
+  - [x] `generateProjectImageUploadUrl()`
+  - [x] `setProjectCoverImage(projectId, storageId)`
+  - [x] `addProjectGalleryImage(projectId, storageId)`
+  - [x] `removeProjectGalleryImage(projectId, storageId)`
+  - [x] `reorderProjectGalleryImages(projectId, orderedIds)`
+- [x] Admin UI:
+  - [x] cover upload + preview
+  - [x] gallery upload + previews
+  - [x] remove image
+  - [x] reorder gallery (simple up/down ok)
+- [x] Portfolio:
+  - [x] cover image renders on cards/details
+  - [x] gallery renders on details
+  - [x] images lazy load
 
 ### Businesses: logos
-- [ ] Mutations:
-  - [ ] `generateBusinessLogoUploadUrl()`
-  - [ ] `setBusinessLogo(businessId, storageId)`
-- [ ] Admin UI:
-  - [ ] logo upload + preview
-- [ ] Portfolio:
-  - [ ] logo renders in businesses grid
+- [x] Mutations:
+  - [x] `generateBusinessLogoUploadUrl()`
+  - [x] `setBusinessLogo(businessId, storageId)`
+- [x] Admin UI:
+  - [x] logo upload + preview
+- [x] Portfolio:
+  - [x] logo renders in businesses grid
 
 ### Resume: PDF
-- [ ] Mutations:
-  - [ ] `generateResumePdfUploadUrl()`
-  - [ ] `setResumePdf(storageId)`
-- [ ] Admin UI:
-  - [ ] upload PDF + show current link
-- [ ] Portfolio:
-  - [ ] “Download PDF” link appears when present
+- [x] Mutations:
+  - [x] `generateResumePdfUploadUrl()`
+  - [x] `setResumePdf(storageId)`
+- [x] Admin UI:
+  - [x] upload PDF + show current link
+- [x] Portfolio:
+  - [x] “Download PDF” link appears when present
 
 ---
 
@@ -419,35 +419,46 @@ Use this as a build checklist. Check items only when complete and verified.
 
 ## 13) Error Handling + UX Requirements
 
-- [ ] Global loading patterns standardized
-- [ ] Empty states for all lists/sections
-- [ ] Toast notifications wired for:
-  - [ ] save success
-  - [ ] save failure
-  - [ ] unauthorized
-  - [ ] validation error
-- [ ] Friendly “Not Authorized” page in admin
-- [ ] Portfolio 404 page for missing/draft projects
-- [ ] Console logging only (no external tracking)
+- [x] Global loading patterns standardized
+  - Spinner component used consistently across both apps
+  - Pattern: `{data === undefined ? <Spinner /> : ...}`
+  - Accessible with role="status", aria-label, sr-only text
+- [x] Empty states for all lists/sections
+  - Admin: Uses EmptyState component from @repo/ui
+  - Portfolio: Uses manual styled empty states to maintain terminal theme
+  - Architectural decision: Visual consistency > code reuse for portfolio
+- [x] Toast notifications wired for:
+  - [x] save success (all CRUD operations show success toast + navigate/clear)
+  - [x] save failure (try-catch blocks with error toasts + console.error)
+  - [x] unauthorized (N/A - full-page NotAuthorized is superior UX for permanent blocking errors)
+  - [x] validation error (inline form errors preferred; server-side validation shows toasts)
+- [x] Friendly "Not Authorized" page in admin (NotAuthorized.tsx with 403 heading + sign-out button)
+- [x] Portfolio 404 page for missing/draft projects (NotFound.tsx with terminal theme + [return_home] button)
+- [x] Console logging only (no external tracking - verified with grep)
+
+**Architectural Decisions**:
+1. Portfolio empty states use manual styling (comment-style: `"// no projects found"`) to maintain terminal/retro aesthetic
+2. Unauthorized access shows full-page NotAuthorized (not toast) - permanent errors need blocking UI with actionable sign-out
+3. Validation errors shown inline at field level (not toasts) - toasts reserved for global/server-side errors
 
 ---
 
 ## 14) Performance + SEO (v1 scope)
 
 ### Performance
-- [ ] Route-level code splitting confirmed
-- [ ] Lazy load images
-- [ ] Avoid shipping admin code into portfolio bundle
-- [ ] Tailwind purge working across monorepo
+- [x] Route-level code splitting confirmed
+- [x] Lazy load images
+- [x] Avoid shipping admin code into portfolio bundle
+- [x] Tailwind purge working across monorepo
 - [ ] Basic Lighthouse sanity check
 
 ### SEO defaults
-- [ ] Default meta tags on portfolio:
-  - [ ] title
-  - [ ] description
-  - [ ] og:title (optional)
-  - [ ] og:description (optional)
-- [ ] No sitemap automation (confirm not added)
+- [x] Default meta tags on portfolio:
+  - [x] title
+  - [x] description
+  - [x] og:title (optional)
+  - [x] og:description (optional)
+- [x] No sitemap automation (confirm not added)
 
 ---
 

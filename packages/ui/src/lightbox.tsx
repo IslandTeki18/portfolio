@@ -147,6 +147,7 @@ export function Lightbox({
           key={`${currentImage.url}-${currentIndex}`}
           src={currentImage.url}
           alt={currentImage.alt || `Image ${currentIndex + 1}`}
+          loading="lazy"
           className="max-h-[90vh] max-w-[90vw] object-contain"
         />
       </div>
