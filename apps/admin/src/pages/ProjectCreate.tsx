@@ -1,12 +1,17 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@repo/lib/convex";
+import { useUpload } from "@repo/lib/use-upload";
+import { useStorageUrl, useStorageUrls } from "@repo/lib/use-storage-url";
 import { api } from "@backend/_generated/api";
+import { Id } from "@backend/_generated/dataModel";
 import { useToast } from "@repo/ui/toast";
 import { Button } from "@repo/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui/card";
 import { Input } from "@repo/ui/input";
 import { Textarea } from "@repo/ui/textarea";
+import { FileUpload, ImagePreview } from "@repo/ui/file-upload";
 
 interface ProjectFormData {
   title: string;
@@ -25,11 +30,51 @@ export default function ProjectCreate() {
   const navigate = useNavigate();
   const { addToast } = useToast();
   const createProject = useMutation(api.projects.createProject);
+  const { upload, isUploading, error: uploadError } = useUpload(
+    api.storage.generateUploadUrl,
+  );
+
+  const [coverImageId, setCoverImageId] = useState<Id<"_storage"> | undefined>();
+  const coverUrl = useStorageUrl(api.storage.getFileUrl, coverImageId);
+
+  const [galleryImageIds, setGalleryImageIds] = useState<Id<"_storage">[]>([]);
+  const galleryUrls = useStorageUrls(
+    api.storage.getFileUrls,
+    galleryImageIds.length > 0 ? (galleryImageIds as string[]) : undefined,
+  );
+  const {
+    upload: galleryUpload,
+    isUploading: isGalleryUploading,
+    error: galleryUploadError,
+  } = useUpload(api.storage.generateUploadUrl);
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<ProjectFormData>();
+
+  const handleCoverUpload = async (file: File) => {
+    try {
+      const storageId = await upload(file);
+      setCoverImageId(storageId as Id<"_storage">);
+    } catch {
+      addToast({ type: "error", message: "Failed to upload cover image" });
+    }
+  };
+
+  const handleGalleryUpload = async (file: File) => {
+    try {
+      const storageId = await galleryUpload(file);
+      setGalleryImageIds((prev) => [...prev, storageId as Id<"_storage">]);
+    } catch {
+      addToast({ type: "error", message: "Failed to upload gallery image" });
+    }
+  };
+
+  const handleRemoveGalleryImage = (storageId: Id<"_storage">) => {
+    setGalleryImageIds((prev) => prev.filter((id) => id !== storageId));
+  };
 
   const onSubmit = async (data: ProjectFormData) => {
     try {
@@ -38,6 +83,8 @@ export default function ProjectCreate() {
         slug: data.slug,
         shortDescription: data.shortDescription,
         longDescription: data.longDescription || undefined,
+        coverImageId: coverImageId,
+        galleryImageIds: galleryImageIds.length > 0 ? galleryImageIds : undefined,
         techStack: data.techStack
           ? data.techStack.split(",").map((s) => s.trim()).filter(Boolean)
           : undefined,
@@ -117,6 +164,74 @@ export default function ProjectCreate() {
                 rows={6}
                 fullWidth
               />
+
+              <div>
+                {coverImageId && coverUrl ? (
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-foreground">
+                      Cover Image
+                    </label>
+                    <ImagePreview
+                      url={coverUrl}
+                      alt="Cover image"
+                      size="lg"
+                      onRemove={() => setCoverImageId(undefined)}
+                    />
+                  </div>
+                ) : (
+                  <FileUpload
+                    label="Cover Image"
+                    accept="image/*"
+                    isUploading={isUploading}
+                    error={uploadError ?? undefined}
+                    onFileSelect={handleCoverUpload}
+                    helperText="Recommended: 1200x630px"
+                    fullWidth
+                  />
+                )}
+              </div>
+
+              {/* Gallery Images */}
+              <div>
+                <label className="mb-1.5 block text-sm font-medium text-foreground">
+                  Gallery Images
+                </label>
+                <div className="space-y-4">
+                  {galleryUrls && galleryUrls.length > 0 && (
+                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                      {galleryUrls.map((item, index) =>
+                        item.url ? (
+                          <ImagePreview
+                            key={item.storageId}
+                            url={item.url}
+                            alt={`Gallery image ${index + 1}`}
+                            size="lg"
+                            onRemove={() =>
+                              handleRemoveGalleryImage(item.storageId as Id<"_storage">)
+                            }
+                            className="w-full"
+                          />
+                        ) : null,
+                      )}
+                    </div>
+                  )}
+                  <FileUpload
+                    label={galleryImageIds.length === 0 ? undefined : "Add More Images"}
+                    accept="image/*"
+                    isUploading={isGalleryUploading}
+                    error={galleryUploadError ?? undefined}
+                    onFileSelect={handleGalleryUpload}
+                    helperText="Upload multiple images to create a gallery (JPG, PNG, WebP)"
+                    fullWidth
+                  />
+                  {galleryImageIds.length === 0 && (
+                    <p className="text-sm text-muted-foreground">
+                      No gallery images yet. Add images to showcase your project.
+                    </p>
+                  )}
+                </div>
+              </div>
+
               <Input
                 {...register("techStack")}
                 label="Tech Stack"
@@ -163,7 +278,10 @@ export default function ProjectCreate() {
               </label>
 
               <div className="flex gap-3 pt-2">
-                <Button type="submit" disabled={isSubmitting}>
+                <Button
+                  type="submit"
+                  disabled={isSubmitting || isUploading || isGalleryUploading}
+                >
                   {isSubmitting ? "Saving..." : "Save as Draft"}
                 </Button>
                 <Link to="/projects">

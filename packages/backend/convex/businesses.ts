@@ -191,3 +191,24 @@ export const listPublishedBusinesses = query({
     });
   },
 });
+
+/**
+ * Public: Get a single active business by slug
+ * Returns null if business is not active or is deleted
+ */
+export const getPublishedBusinessBySlug = query({
+  args: { slug: v.string() },
+  handler: async (ctx, args) => {
+    const business = await ctx.db
+      .query("businesses")
+      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .first();
+
+    // Return null if missing, inactive, or deleted
+    if (!business || !business.active || business.deletedAt !== null) {
+      return null;
+    }
+
+    return business;
+  },
+});

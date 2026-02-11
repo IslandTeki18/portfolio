@@ -1,6 +1,9 @@
+import { useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useQuery, useMutation } from "@repo/lib/convex";
+import { useUpload } from "@repo/lib/use-upload";
+import { useStorageUrl } from "@repo/lib/use-storage-url";
 import { api } from "@backend/_generated/api";
 import { Id } from "@backend/_generated/dataModel";
 import { useToast } from "@repo/ui/toast";
@@ -9,7 +12,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui/card";
 import { Input } from "@repo/ui/input";
 import { Textarea } from "@repo/ui/textarea";
 import { Spinner } from "@repo/ui/spinner";
-import { useEffect } from "react";
+import { FileUpload, ImagePreview } from "@repo/ui/file-upload";
 
 interface BusinessFormData {
   name: string;
@@ -30,11 +33,17 @@ export default function BusinessEdit() {
 
   const business = useQuery(
     api.businesses.getBusinessById,
-    id ? { id: id as Id<"businesses"> } : "skip"
+    id ? { id: id as Id<"businesses"> } : "skip",
   );
 
   const updateBusiness = useMutation(api.businesses.updateBusiness);
   const softDeleteBusiness = useMutation(api.businesses.softDeleteBusiness);
+  const removeBusinessLogo = useMutation(api.storage.removeBusinessLogo);
+  const { upload, isUploading, error: uploadError } = useUpload(
+    api.storage.generateUploadUrl,
+  );
+
+  const logoUrl = useStorageUrl(api.storage.getFileUrl, business?.logoImageId);
 
   const {
     register,
@@ -43,7 +52,6 @@ export default function BusinessEdit() {
     formState: { errors, isSubmitting },
   } = useForm<BusinessFormData>();
 
-  // Pre-populate form when business data loads
   useEffect(() => {
     if (business) {
       reset({
@@ -59,6 +67,30 @@ export default function BusinessEdit() {
       });
     }
   }, [business, reset]);
+
+  const handleLogoUpload = async (file: File) => {
+    if (!id) return;
+    try {
+      const storageId = await upload(file);
+      await updateBusiness({
+        id: id as Id<"businesses">,
+        logoImageId: storageId as Id<"_storage">,
+      });
+      addToast({ type: "success", message: "Logo uploaded" });
+    } catch {
+      addToast({ type: "error", message: "Failed to upload logo" });
+    }
+  };
+
+  const handleRemoveLogo = async () => {
+    if (!id) return;
+    try {
+      await removeBusinessLogo({ id: id as Id<"businesses"> });
+      addToast({ type: "success", message: "Logo removed" });
+    } catch {
+      addToast({ type: "error", message: "Failed to remove logo" });
+    }
+  };
 
   const onSubmit = async (data: BusinessFormData) => {
     if (!id) return;
@@ -96,17 +128,14 @@ export default function BusinessEdit() {
     if (!id) return;
     if (
       !confirm(
-        "Are you sure you want to delete this business? This action can be undone by an admin."
+        "Are you sure you want to delete this business? This action can be undone by an admin.",
       )
     ) {
       return;
     }
     try {
       await softDeleteBusiness({ id: id as Id<"businesses"> });
-      addToast({
-        type: "success",
-        message: "Business deleted successfully",
-      });
+      addToast({ type: "success", message: "Business deleted successfully" });
       navigate("/businesses");
     } catch (error) {
       console.error("Failed to delete business:", error);
@@ -207,6 +236,33 @@ export default function BusinessEdit() {
                 rows={6}
                 fullWidth
               />
+
+              <div>
+                {business.logoImageId && logoUrl ? (
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-foreground">
+                      Logo
+                    </label>
+                    <ImagePreview
+                      url={logoUrl}
+                      alt="Logo"
+                      size="md"
+                      onRemove={handleRemoveLogo}
+                    />
+                  </div>
+                ) : (
+                  <FileUpload
+                    label="Logo"
+                    accept="image/*"
+                    isUploading={isUploading}
+                    error={uploadError ?? undefined}
+                    onFileSelect={handleLogoUpload}
+                    helperText="Square image recommended"
+                    fullWidth
+                  />
+                )}
+              </div>
+
               <Input
                 {...register("websiteUrl")}
                 label="Website URL"

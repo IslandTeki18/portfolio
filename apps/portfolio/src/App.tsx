@@ -4,6 +4,7 @@ import { Spinner } from "@repo/ui/spinner";
 
 const Landing = lazy(() => import("./pages/Landing"));
 const ProjectDetail = lazy(() => import("./pages/ProjectDetail"));
+const BusinessDetail = lazy(() => import("./pages/BusinessDetail"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 export default function App() {
@@ -18,6 +19,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/projects/:slug" element={<ProjectDetail />} />
+        <Route path="/businesses/:slug" element={<BusinessDetail />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Suspense>

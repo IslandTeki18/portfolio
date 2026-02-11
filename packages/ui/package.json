@@ -18,6 +18,7 @@
     "./empty-state": "./src/empty-state.tsx",
     "./form-error": "./src/form-error.tsx",
     "./code": "./src/code.tsx",
+    "./file-upload": "./src/file-upload.tsx",
     "./lib/utils": "./src/lib/utils.ts",
     "./lib/form-utils": "./src/lib/form-utils.ts",
     "./styles.css": "./src/styles.css"

@@ -1,12 +1,17 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@repo/lib/convex";
+import { useUpload } from "@repo/lib/use-upload";
+import { useStorageUrl } from "@repo/lib/use-storage-url";
 import { api } from "@backend/_generated/api";
+import { Id } from "@backend/_generated/dataModel";
 import { useToast } from "@repo/ui/toast";
 import { Button } from "@repo/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui/card";
 import { Input } from "@repo/ui/input";
 import { Textarea } from "@repo/ui/textarea";
+import { FileUpload, ImagePreview } from "@repo/ui/file-upload";
 
 interface BusinessFormData {
   name: string;
@@ -24,6 +29,13 @@ export default function BusinessCreate() {
   const navigate = useNavigate();
   const { addToast } = useToast();
   const createBusiness = useMutation(api.businesses.createBusiness);
+  const { upload, isUploading, error: uploadError } = useUpload(
+    api.storage.generateUploadUrl,
+  );
+
+  const [logoImageId, setLogoImageId] = useState<Id<"_storage"> | undefined>();
+  const logoUrl = useStorageUrl(api.storage.getFileUrl, logoImageId);
+
   const {
     register,
     handleSubmit,
@@ -34,6 +46,15 @@ export default function BusinessCreate() {
     },
   });
 
+  const handleLogoUpload = async (file: File) => {
+    try {
+      const storageId = await upload(file);
+      setLogoImageId(storageId as Id<"_storage">);
+    } catch {
+      addToast({ type: "error", message: "Failed to upload logo" });
+    }
+  };
+
   const onSubmit = async (data: BusinessFormData) => {
     try {
       await createBusiness({
@@ -41,6 +62,7 @@ export default function BusinessCreate() {
         slug: data.slug,
         shortDescription: data.shortDescription,
         longDescription: data.longDescription || undefined,
+        logoImageId: logoImageId,
         websiteUrl: data.websiteUrl || undefined,
         tags: data.tags
           ? data.tags.split(",").map((s) => s.trim()).filter(Boolean)
@@ -117,6 +139,33 @@ export default function BusinessCreate() {
                 rows={6}
                 fullWidth
               />
+
+              <div>
+                {logoImageId && logoUrl ? (
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-foreground">
+                      Logo
+                    </label>
+                    <ImagePreview
+                      url={logoUrl}
+                      alt="Logo"
+                      size="md"
+                      onRemove={() => setLogoImageId(undefined)}
+                    />
+                  </div>
+                ) : (
+                  <FileUpload
+                    label="Logo"
+                    accept="image/*"
+                    isUploading={isUploading}
+                    error={uploadError ?? undefined}
+                    onFileSelect={handleLogoUpload}
+                    helperText="Square image recommended"
+                    fullWidth
+                  />
+                )}
+              </div>
+
               <Input
                 {...register("websiteUrl")}
                 label="Website URL"

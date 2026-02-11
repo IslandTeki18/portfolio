@@ -8,7 +8,9 @@
     "./slug": "./src/slug.ts",
     "./url": "./src/url.ts",
     "./date": "./src/date.ts",
-    "./convex": "./src/convex.tsx"
+    "./convex": "./src/convex.tsx",
+    "./use-upload": "./src/use-upload.ts",
+    "./use-storage-url": "./src/use-storage-url.ts"
   },
   "scripts": {
     "check-types": "tsc --noEmit"

@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "./lib/utils";
 
 const modalContentVariants = cva(
-  "relative w-full bg-card rounded-lg shadow-xl max-h-[90vh] overflow-auto",
+  "relative w-full bg-card rounded-lg shadow-xl max-h-[90vh] flex flex-col",
   {
     variants: {
       size: {
@@ -83,7 +83,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
           className={cn(modalContentVariants({ size }))}
         >
           {title && (
-            <div className="flex items-center justify-between p-4 border-b border-border">
+            <div className="flex items-center justify-between p-4 border-b border-border flex-shrink-0">
               <h2 id="modal-title" className="text-xl font-semibold text-foreground">
                 {title}
               </h2>
@@ -106,7 +106,7 @@ export const Modal = forwardRef<HTMLDivElement, ModalProps>(
               </button>
             </div>
           )}
-          <div className="p-4">{children}</div>
+          <div className="p-4 overflow-y-auto flex-1 min-h-0">{children}</div>
         </div>
       </div>
     );

@@ -1,5 +1,5 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui/card";
-import { Button } from "@repo/ui/button";
+import { useStorageUrl } from "@repo/lib/use-storage-url";
+import { api } from "@backend/_generated/api";
 import type { Resume } from "../types/convex";
 
 interface ResumePreviewProps {
@@ -8,50 +8,54 @@ interface ResumePreviewProps {
 }
 
 export default function ResumePreview({ resume, onViewFull }: ResumePreviewProps) {
+  const pdfUrl = useStorageUrl(api.storage.getFileUrl, resume.pdfStorageId);
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Resume</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {resume.headline && (
-          <p className="text-lg font-semibold text-foreground">
+    <div className="space-y-3">
+      {resume.headline && (
+        <div className="space-y-1">
+          <p className="font-mono text-[10px] md:text-xs text-[#737373]">$ headline:</p>
+          <p className="font-mono text-xs md:text-[13px] leading-relaxed text-[#E5E5E5]">
             {resume.headline}
           </p>
-        )}
-
-        {resume.summary && (
-          <p className="text-label-secondary">{resume.summary}</p>
-        )}
-
-        {resume.skills && resume.skills.length > 0 && (
-          <div>
-            <h4 className="font-semibold text-foreground mb-2">Skills</h4>
-            <div className="flex flex-wrap gap-2">
-              {resume.skills.slice(0, 10).map((skill) => (
-                <span
-                  key={skill}
-                  className="px-2 py-1 text-xs rounded bg-muted text-muted-foreground"
-                >
-                  {skill}
-                </span>
-              ))}
-              {resume.skills.length > 10 && (
-                <span className="px-2 py-1 text-xs text-muted-foreground">
-                  +{resume.skills.length - 10} more
-                </span>
-              )}
-            </div>
-          </div>
-        )}
-
-        <div className="flex gap-3">
-          <Button onClick={onViewFull}>View Full Resume</Button>
-          {resume.pdfStorageId && (
-            <Button variant="outline">Download PDF</Button>
-          )}
         </div>
-      </CardContent>
-    </Card>
+      )}
+
+      {resume.summary && (
+        <div className="space-y-1">
+          <p className="font-mono text-[10px] md:text-xs text-[#737373]">$ summary:</p>
+          <p className="font-mono text-[11px] md:text-xs leading-relaxed text-[#A3A3A3]">
+            {resume.summary}
+          </p>
+        </div>
+      )}
+
+      {resume.skills && resume.skills.length > 0 && (
+        <div className="space-y-1">
+          <p className="font-mono text-[10px] md:text-xs text-[#737373]">$ skills:</p>
+          <p className="font-mono text-[11px] md:text-xs text-[#22C55E] break-words">
+            {resume.skills.slice(0, 10).join(" · ")}
+            {resume.skills.length > 10 && ` · +${resume.skills.length - 10} more`}
+          </p>
+        </div>
+      )}
+
+      <div className="flex flex-col sm:flex-row justify-end gap-2">
+        <button
+          onClick={onViewFull}
+          className="bg-[#F59E0B] px-3 md:px-4 py-1.5 md:py-2 font-mono text-[10px] md:text-xs font-medium text-[#0C0C0C] hover:bg-[#D97706] text-center"
+        >
+          [view_full_resume]
+        </button>
+        {resume.pdfStorageId && pdfUrl && (
+          <button
+            onClick={() => window.open(pdfUrl, "_blank")}
+            className="border border-[#737373] px-3 md:px-4 py-1.5 md:py-2 font-mono text-[10px] md:text-xs font-medium text-[#737373] hover:border-[#A3A3A3] hover:text-[#A3A3A3] text-center"
+          >
+            [download_pdf]
+          </button>
+        )}
+      </div>
+    </div>
   );
 }

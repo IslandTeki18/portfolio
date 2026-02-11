@@ -3,12 +3,7 @@ import { useForm } from "react-hook-form";
 import { useQuery, useAction } from "@repo/lib/convex";
 import { api } from "@backend/_generated/api";
 import { useToast } from "@repo/ui/toast";
-import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui/card";
-import { Input } from "@repo/ui/input";
-import { Textarea } from "@repo/ui/textarea";
-import { Button } from "@repo/ui/button";
 import { Spinner } from "@repo/ui/spinner";
-import { EmptyState, EmptyStateIcon } from "@repo/ui/empty-state";
 import ProjectCard from "../components/ProjectCard";
 import BusinessCard from "../components/BusinessCard";
 import ResumePreview from "../components/ResumePreview";
@@ -64,48 +59,60 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-background-primary p-8">
-      <div className="mx-auto max-w-3xl space-y-8">
-        <header className="space-y-2">
-          <h1 className="text-4xl font-bold text-label-primary">Landon McKell</h1>
-          <p className="text-label-secondary">
-            Full Stack Web Developer & Mobile Developer
+    <div className="min-h-screen bg-[#0C0C0C] p-4 sm:p-6 md:p-10">
+      <div className="mx-auto max-w-3xl space-y-6 md:space-y-8">
+        <header className="space-y-2 border-b-2 border-[#22C55E] pb-4 md:pb-6">
+          <div className="flex items-center gap-2 md:gap-3">
+            <span className="font-mono text-[24px] md:text-[32px] font-semibold text-[#22C55E]">&gt;</span>
+            <h1 className="font-mono text-[24px] md:text-[32px] font-semibold text-[#E5E5E5] break-all">landon_mckell</h1>
+          </div>
+          <p className="font-mono text-xs md:text-sm text-[#737373]">
+            {"// full stack web developer & mobile developer"}
           </p>
         </header>
 
         {/* Projects Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Projects</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="border-2 border-[#22C55E] bg-[#171717] p-4 md:p-5">
+          <div className="flex items-center justify-between border-b border-[#252525] pb-3">
+            <h2 className="font-mono text-sm md:text-base font-medium text-[#22C55E]">~ projects</h2>
+            <span className="font-mono text-[10px] md:text-xs text-[#737373]">
+              {projects ? `// ${projects.length} items` : "// loading..."}
+            </span>
+          </div>
+          <div className="mt-4">
             {projects === undefined ? (
               <div className="flex justify-center py-8">
                 <Spinner size="md" />
               </div>
             ) : projects === null || projects.length === 0 ? (
-              <EmptyState
-                icon={<EmptyStateIcon.Folder />}
-                title="No projects yet"
-                description="Check back soon for updates."
-              />
+              <div className="py-8 text-center">
+                <p className="font-mono text-sm text-[#737373]">{"// no projects found"}</p>
+              </div>
             ) : (
-              <div className="grid gap-4">
+              <div className="space-y-3">
                 {projects.map((project) => (
                   <ProjectCard key={project._id} project={project} />
                 ))}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Resume Section */}
         {resume !== undefined && resume !== null && (
           <>
-            <ResumePreview
-              resume={resume}
-              onViewFull={() => setIsResumeModalOpen(true)}
-            />
+            <div className="border-2 border-[#F59E0B] bg-[#171717] p-4 md:p-5">
+              <div className="flex items-center justify-between border-b border-[#252525] pb-3">
+                <h2 className="font-mono text-sm md:text-base font-medium text-[#F59E0B]">~ resume.txt</h2>
+                <span className="font-mono text-[10px] md:text-xs text-[#737373]">{"// ready"}</span>
+              </div>
+              <div className="mt-4">
+                <ResumePreview
+                  resume={resume}
+                  onViewFull={() => setIsResumeModalOpen(true)}
+                />
+              </div>
+            </div>
             <ResumeModal
               resume={resume}
               isOpen={isResumeModalOpen}
@@ -115,80 +122,103 @@ export default function Landing() {
         )}
 
         {/* Businesses Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Businesses</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="border-2 border-[#3B82F6] bg-[#171717] p-4 md:p-5">
+          <div className="flex items-center justify-between border-b border-[#252525] pb-3">
+            <h2 className="font-mono text-sm md:text-base font-medium text-[#3B82F6]">~ businesses</h2>
+            <span className="font-mono text-[10px] md:text-xs text-[#737373]">
+              {businesses ? `// ${businesses.length} active ventures` : "// loading..."}
+            </span>
+          </div>
+          <div className="mt-4">
             {businesses === undefined ? (
               <div className="flex justify-center py-8">
                 <Spinner size="md" />
               </div>
             ) : businesses === null || businesses.length === 0 ? (
-              <EmptyState
-                icon={<EmptyStateIcon.Inbox />}
-                title="No businesses listed"
-                description="Check back later for business ventures."
-              />
+              <div className="py-8 text-center">
+                <p className="font-mono text-sm text-[#737373]">{"// no businesses listed"}</p>
+              </div>
             ) : (
-              <div className="grid gap-4">
+              <div className="space-y-3">
                 {businesses.map((business) => (
                   <BusinessCard key={business._id} business={business} />
                 ))}
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         {/* Contact Form */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Let&apos;s Connect</CardTitle>
-          </CardHeader>
-          <CardContent>
+        <div className="border-2 border-[#EF4444] bg-[#171717] p-4 md:p-5">
+          <div className="flex items-center justify-between border-b border-[#252525] pb-3">
+            <h2 className="font-mono text-sm md:text-base font-medium text-[#EF4444]">~ let&apos;s_connect</h2>
+            <span className="font-mono text-[10px] md:text-xs text-[#737373]">{"// send a message"}</span>
+          </div>
+          <div className="mt-4">
             <form className="space-y-4" onSubmit={handleSubmit(onSubmitContact)}>
-              <Input
-                {...register("name")}
-                label="Name"
-                placeholder="Your name (optional)"
-                fullWidth
-              />
-              <Input
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                    message: "Please enter a valid email address",
-                  },
-                })}
-                label="Email"
-                type="email"
-                placeholder="you@example.com"
-                required
-                fullWidth
-                error={errors.email?.message}
-              />
-              <Textarea
-                {...register("message", {
-                  required: "Message is required",
-                  minLength: {
-                    value: 10,
-                    message: "Message must be at least 10 characters",
-                  },
-                })}
-                label="Message"
-                placeholder="Your message..."
-                rows={4}
-                required
-                fullWidth
-                error={errors.message?.message}
-              />
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Sending..." : "Send Message"}
-              </Button>
+              <div className="space-y-1.5">
+                <label className="font-mono text-xs text-[#737373]">$ name</label>
+                <input
+                  {...register("name")}
+                  type="text"
+                  placeholder="your_name (optional)"
+                  className="w-full border border-[#1F1F1F] bg-[#1A1A1A] px-3 py-2.5 font-mono text-xs text-[#E5E5E5] placeholder-[#525252] focus:border-[#22C55E] focus:outline-none"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="flex items-center gap-1 font-mono text-xs text-[#737373]">
+                  <span>$ email</span>
+                  <span className="text-[#EF4444]">*</span>
+                </label>
+                <input
+                  {...register("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: "Please enter a valid email address",
+                    },
+                  })}
+                  type="email"
+                  placeholder="you@example.com"
+                  className="w-full border border-[#22C55E] bg-[#1A1A1A] px-3 py-2.5 font-mono text-xs text-[#E5E5E5] placeholder-[#525252] focus:border-[#22C55E] focus:outline-none"
+                />
+                {errors.email && (
+                  <p className="font-mono text-xs text-[#EF4444]">{`// ${errors.email.message}`}</p>
+                )}
+              </div>
+              <div className="space-y-1.5">
+                <label className="flex items-center gap-1 font-mono text-xs text-[#737373]">
+                  <span>$ message</span>
+                  <span className="text-[#EF4444]">*</span>
+                </label>
+                <textarea
+                  {...register("message", {
+                    required: "Message is required",
+                    minLength: {
+                      value: 10,
+                      message: "Message must be at least 10 characters",
+                    },
+                  })}
+                  rows={5}
+                  placeholder="your_message..."
+                  className="w-full border border-[#22C55E] bg-[#1A1A1A] px-3 py-2.5 font-mono text-xs text-[#E5E5E5] placeholder-[#525252] focus:border-[#22C55E] focus:outline-none"
+                />
+                {errors.message && (
+                  <p className="font-mono text-xs text-[#EF4444]">{`// ${errors.message.message}`}</p>
+                )}
+              </div>
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full sm:w-auto bg-[#EF4444] px-5 py-2.5 font-mono text-xs md:text-[13px] font-semibold text-[#0C0C0C] hover:bg-[#DC2626] disabled:opacity-50"
+                >
+                  {isSubmitting ? "[sending...]" : "[send_message]"}
+                </button>
+              </div>
             </form>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </div>
     </div>
   );

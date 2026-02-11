@@ -1,6 +1,9 @@
+import { useEffect } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { useQuery, useMutation } from "@repo/lib/convex";
+import { useUpload } from "@repo/lib/use-upload";
+import { useStorageUrl, useStorageUrls } from "@repo/lib/use-storage-url";
 import { api } from "@backend/_generated/api";
 import { Id } from "@backend/_generated/dataModel";
 import { useToast } from "@repo/ui/toast";
@@ -9,7 +12,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui/card";
 import { Input } from "@repo/ui/input";
 import { Textarea } from "@repo/ui/textarea";
 import { Spinner } from "@repo/ui/spinner";
-import { useEffect } from "react";
+import { FileUpload, ImagePreview } from "@repo/ui/file-upload";
 
 interface ProjectFormData {
   title: string;
@@ -31,13 +34,28 @@ export default function ProjectEdit() {
 
   const project = useQuery(
     api.projects.getProjectById,
-    id ? { id: id as Id<"projects"> } : "skip"
+    id ? { id: id as Id<"projects"> } : "skip",
   );
 
   const updateProject = useMutation(api.projects.updateProject);
   const publishProject = useMutation(api.projects.publishProject);
   const unpublishProject = useMutation(api.projects.unpublishProject);
   const softDeleteProject = useMutation(api.projects.softDeleteProject);
+  const removeProjectCoverImage = useMutation(api.storage.removeProjectCoverImage);
+  const addProjectGalleryImage = useMutation(api.storage.addProjectGalleryImage);
+  const removeProjectGalleryImage = useMutation(api.storage.removeProjectGalleryImage);
+  const reorderProjectGalleryImages = useMutation(api.storage.reorderProjectGalleryImages);
+
+  const { upload: uploadCover, isUploading: isCoverUploading, error: coverUploadError } =
+    useUpload(api.storage.generateUploadUrl);
+  const { upload: uploadGallery, isUploading: isGalleryUploading, error: galleryUploadError } =
+    useUpload(api.storage.generateUploadUrl);
+
+  const coverUrl = useStorageUrl(api.storage.getFileUrl, project?.coverImageId);
+  const galleryUrls = useStorageUrls(
+    api.storage.getFileUrls,
+    project?.galleryImageIds as string[] | undefined,
+  );
 
   const {
     register,
@@ -46,7 +64,6 @@ export default function ProjectEdit() {
     formState: { errors, isSubmitting },
   } = useForm<ProjectFormData>();
 
-  // Pre-populate form when project data loads
   useEffect(() => {
     if (project) {
       reset({
@@ -63,6 +80,74 @@ export default function ProjectEdit() {
       });
     }
   }, [project, reset]);
+
+  const handleCoverUpload = async (file: File) => {
+    if (!id) return;
+    try {
+      const storageId = await uploadCover(file);
+      await updateProject({
+        id: id as Id<"projects">,
+        coverImageId: storageId as Id<"_storage">,
+      });
+      addToast({ type: "success", message: "Cover image uploaded" });
+    } catch {
+      addToast({ type: "error", message: "Failed to upload cover image" });
+    }
+  };
+
+  const handleRemoveCover = async () => {
+    if (!id) return;
+    try {
+      await removeProjectCoverImage({ id: id as Id<"projects"> });
+      addToast({ type: "success", message: "Cover image removed" });
+    } catch {
+      addToast({ type: "error", message: "Failed to remove cover image" });
+    }
+  };
+
+  const handleGalleryUpload = async (file: File) => {
+    if (!id) return;
+    try {
+      const storageId = await uploadGallery(file);
+      await addProjectGalleryImage({
+        projectId: id as Id<"projects">,
+        storageId: storageId as Id<"_storage">,
+      });
+      addToast({ type: "success", message: "Gallery image added" });
+    } catch {
+      addToast({ type: "error", message: "Failed to upload gallery image" });
+    }
+  };
+
+  const handleRemoveGalleryImage = async (storageId: string) => {
+    if (!id) return;
+    try {
+      await removeProjectGalleryImage({
+        projectId: id as Id<"projects">,
+        storageId: storageId as Id<"_storage">,
+      });
+      addToast({ type: "success", message: "Gallery image removed" });
+    } catch {
+      addToast({ type: "error", message: "Failed to remove gallery image" });
+    }
+  };
+
+  const handleMoveGalleryImage = async (index: number, direction: "up" | "down") => {
+    if (!id || !project?.galleryImageIds) return;
+    const ids = [...project.galleryImageIds];
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= ids.length) return;
+
+    [ids[index], ids[targetIndex]] = [ids[targetIndex], ids[index]];
+    try {
+      await reorderProjectGalleryImages({
+        projectId: id as Id<"projects">,
+        orderedIds: ids,
+      });
+    } catch {
+      addToast({ type: "error", message: "Failed to reorder gallery" });
+    }
+  };
 
   const onSubmit = async (data: ProjectFormData) => {
     if (!id) return;
@@ -103,10 +188,7 @@ export default function ProjectEdit() {
     if (!id) return;
     try {
       await publishProject({ id: id as Id<"projects"> });
-      addToast({
-        type: "success",
-        message: "Project published successfully",
-      });
+      addToast({ type: "success", message: "Project published successfully" });
       navigate("/projects");
     } catch (error) {
       console.error("Failed to publish project:", error);
@@ -121,10 +203,7 @@ export default function ProjectEdit() {
     if (!id) return;
     try {
       await unpublishProject({ id: id as Id<"projects"> });
-      addToast({
-        type: "success",
-        message: "Project unpublished successfully",
-      });
+      addToast({ type: "success", message: "Project unpublished successfully" });
       navigate("/projects");
     } catch (error) {
       console.error("Failed to unpublish project:", error);
@@ -139,17 +218,14 @@ export default function ProjectEdit() {
     if (!id) return;
     if (
       !confirm(
-        "Are you sure you want to delete this project? This action can be undone by an admin."
+        "Are you sure you want to delete this project? This action can be undone by an admin.",
       )
     ) {
       return;
     }
     try {
       await softDeleteProject({ id: id as Id<"projects"> });
-      addToast({
-        type: "success",
-        message: "Project deleted successfully",
-      });
+      addToast({ type: "success", message: "Project deleted successfully" });
       navigate("/projects");
     } catch (error) {
       console.error("Failed to delete project:", error);
@@ -252,6 +328,33 @@ export default function ProjectEdit() {
                 rows={6}
                 fullWidth
               />
+
+              <div>
+                {project.coverImageId && coverUrl ? (
+                  <div>
+                    <label className="mb-1.5 block text-sm font-medium text-foreground">
+                      Cover Image
+                    </label>
+                    <ImagePreview
+                      url={coverUrl}
+                      alt="Cover image"
+                      size="lg"
+                      onRemove={handleRemoveCover}
+                    />
+                  </div>
+                ) : (
+                  <FileUpload
+                    label="Cover Image"
+                    accept="image/*"
+                    isUploading={isCoverUploading}
+                    error={coverUploadError ?? undefined}
+                    onFileSelect={handleCoverUpload}
+                    helperText="Recommended: 1200x630px"
+                    fullWidth
+                  />
+                )}
+              </div>
+
               <Input
                 {...register("techStack")}
                 label="Tech Stack"
@@ -323,6 +426,64 @@ export default function ProjectEdit() {
                 </Button>
               </div>
             </form>
+          </CardContent>
+        </Card>
+
+        {/* Gallery Images */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Gallery Images</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {galleryUrls && galleryUrls.length > 0 ? (
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                  {galleryUrls.map((item, index) =>
+                    item.url ? (
+                      <div key={item.storageId} className="relative">
+                        <ImagePreview
+                          url={item.url}
+                          alt={`Gallery image ${index + 1}`}
+                          size="lg"
+                          onRemove={() => handleRemoveGalleryImage(item.storageId)}
+                          className="w-full"
+                        />
+                        <div className="mt-1 flex justify-center gap-1">
+                          <button
+                            type="button"
+                            className="rounded px-2 py-0.5 text-xs text-muted-foreground hover:bg-muted disabled:opacity-30"
+                            disabled={index === 0}
+                            onClick={() => handleMoveGalleryImage(index, "up")}
+                          >
+                            &larr;
+                          </button>
+                          <button
+                            type="button"
+                            className="rounded px-2 py-0.5 text-xs text-muted-foreground hover:bg-muted disabled:opacity-30"
+                            disabled={index === galleryUrls.length - 1}
+                            onClick={() => handleMoveGalleryImage(index, "down")}
+                          >
+                            &rarr;
+                          </button>
+                        </div>
+                      </div>
+                    ) : null,
+                  )}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">No gallery images yet.</p>
+              )}
+
+              <FileUpload
+                label="Add Gallery Image"
+                accept="image/*"
+                isUploading={isGalleryUploading}
+                error={galleryUploadError ?? undefined}
+                onFileSelect={handleGalleryUpload}
+                fullWidth
+                size="sm"
+              />
+            </div>
           </CardContent>
         </Card>
       </div>
