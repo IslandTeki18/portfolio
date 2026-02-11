@@ -28,6 +28,7 @@ export {
   type ModalBodyProps,
   type ModalFooterProps,
 } from "./modal";
+export { Lightbox, type LightboxProps } from "./lightbox";
 export { Spinner, type SpinnerProps } from "./spinner";
 export {
   ToastProvider,
@@ -40,3 +41,11 @@ export {
 export { EmptyState, EmptyStateIcon, type EmptyStateProps } from "./empty-state";
 export { FormError, FormSuccess, type FormErrorProps, type FormSuccessProps } from "./form-error";
 export { Code, type CodeProps } from "./code";
+export {
+  FileUpload,
+  ImagePreview,
+  FileIndicator,
+  type FileUploadProps,
+  type ImagePreviewProps,
+  type FileIndicatorProps,
+} from "./file-upload";
