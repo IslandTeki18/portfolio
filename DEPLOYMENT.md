@@ -37,7 +37,7 @@ Required environment variables:
 3. **Node Version**: 18.x or higher
 4. **Build Settings**:
    - Build Command: `cd ../.. && pnpm build --filter=portfolio`
-   - Output Directory: `dist`
+   - Output Directory: `apps/portfolio/dist`
    - Install Command: `cd ../.. && pnpm install --frozen-lockfile`
 
 ### Admin Project
@@ -47,7 +47,7 @@ Required environment variables:
 3. **Node Version**: 18.x or higher
 4. **Build Settings**:
    - Build Command: `cd ../.. && pnpm build --filter=admin`
-   - Output Directory: `dist`
+   - Output Directory: `apps/admin/dist`
    - Install Command: `cd ../.. && pnpm install --frozen-lockfile`
 
 ## Important: Convex Generated Files
