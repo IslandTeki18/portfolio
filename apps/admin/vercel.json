@@ -1,8 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "pnpm build",
-  "outputDirectory": "dist",
-  "installCommand": "pnpm install",
+  "buildCommand": "cd ../.. && pnpm build --filter=admin",
+  "outputDirectory": "apps/admin/dist",
+  "installCommand": "cd ../.. && pnpm install --frozen-lockfile",
   "framework": null,
   "cleanUrls": true,
   "trailingSlash": false,
