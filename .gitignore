@@ -34,7 +34,9 @@ yarn-debug.log*
 yarn-error.log*
 
 # Convex codegen
-_generated
+# Note: _generated should be committed for Vercel deployments
+# See: https://docs.convex.dev/production/hosting/vercel
+# _generated
 
 # Misc
 .DS_Store
