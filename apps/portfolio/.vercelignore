@@ -1,0 +1,10 @@
+# Ignore monorepo packages during source upload
+../../packages/*/node_modules
+../../apps/*/node_modules
+
+# Ignore other apps
+../../apps/admin
+
+# Ignore build artifacts
+../../.turbo
+../../node_modules/.cache

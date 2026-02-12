@@ -1,28 +1,38 @@
-# Turborepo starter
+# Portfolio Monorepo
 
-This Turborepo starter is maintained by the Turborepo core team.
+A Turborepo monorepo containing a portfolio website and admin panel built with React, TypeScript, Vite, and Tailwind CSS v4.
 
-## Using this example
+**Package Manager**: pnpm (v9.0.0+)
+**Node Version**: >=18
 
-Run the following command:
-
-```sh
-npx create-turbo@latest
-```
-
-## What's inside?
+## What's Inside
 
 This Turborepo includes the following packages/apps:
 
-### Apps and Packages
+### Apps
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- `apps/portfolio/`: Main portfolio site (React + Vite)
+- `apps/admin/`: Admin panel (React + Vite + Clerk Auth)
+
+### Packages
+
+- `@repo/ui`: Shared React component library
+- `@repo/lib`: Shared utilities and Convex hooks
+- `@repo/eslint-config`: Shared ESLint configurations
+- `@repo/typescript-config`: Shared TypeScript configurations
+- `@repo/tailwind-config`: Shared Tailwind v4 theme
 
 Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+
+## Technology Stack
+
+- **Framework**: React 19 + TypeScript
+- **Build Tool**: Vite 7
+- **Styling**: Tailwind CSS v4
+- **Backend**: Convex (serverless)
+- **Authentication**: Clerk (admin only)
+- **Component Library**: Custom design system with CVA
+- **Monorepo**: Turborepo + pnpm workspaces
 
 ### Utilities
 
@@ -32,104 +42,146 @@ This Turborepo has some additional tools already setup for you:
 - [ESLint](https://eslint.org/) for code linting
 - [Prettier](https://prettier.io) for code formatting
 
+## Getting Started
+
+### Installation
+
+```bash
+# Install dependencies
+pnpm install
+
+# Start Convex backend (required)
+npx convex dev
+```
+
+### Development
+
+```bash
+# Run all apps in dev mode
+pnpm dev
+
+# Run specific app
+pnpm dev --filter=portfolio
+pnpm dev --filter=admin
+```
+
+**Development URLs**:
+- Portfolio: http://localhost:5173
+- Admin: http://localhost:5176
+
 ### Build
 
-To build all apps and packages, run the following command:
+```bash
+# Build all apps and packages
+pnpm build
 
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+# Build specific app
+pnpm build --filter=portfolio
+pnpm build --filter=admin
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+### Type Checking & Linting
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+```bash
+# Type check all packages
+pnpm check-types
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+# Lint all packages
+pnpm lint
 
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
+# Format code
+pnpm format
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+### Preview Production Build
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+```bash
+# Build first
+pnpm build --filter=portfolio
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
+# Preview
+cd apps/portfolio
+pnpm preview
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+## Deployment
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for comprehensive deployment instructions.
+
+### Quick Deploy to Vercel
+
+```bash
+# Install Vercel CLI
+npm i -g vercel
+
+# Deploy portfolio (preview)
+cd apps/portfolio
+vercel
+
+# Deploy to production
+vercel --prod
+```
+
+**Required Environment Variables**:
+- Portfolio: `VITE_CONVEX_URL`
+- Admin: `VITE_CONVEX_URL`, `VITE_CLERK_PUBLISHABLE_KEY`
+
+## Project Structure
 
 ```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
+.
+├── apps/
+│   ├── portfolio/          # Portfolio website
+│   │   ├── src/
+│   │   ├── vercel.json     # Vercel config
+│   │   └── vite.config.ts
+│   └── admin/              # Admin panel
+│       ├── src/
+│       ├── vercel.json     # Vercel config
+│       └── vite.config.ts
+├── packages/
+│   ├── ui/                 # Shared components
+│   ├── lib/                # Shared utilities
+│   ├── eslint-config/      # ESLint configs
+│   ├── typescript-config/  # TypeScript configs
+│   └── tailwind-config/    # Tailwind theme
+├── backend/                # Convex backend
+│   ├── convex/
+│   └── convex.json
+└── turbo.json              # Turborepo config
 ```
 
-## Useful Links
+## Environment Setup
 
-Learn more about the power of Turborepo:
+### Portfolio Development
 
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+Create `apps/portfolio/.env.local`:
+
+```bash
+VITE_CONVEX_URL=https://<your-deployment>.convex.cloud
+```
+
+### Admin Development
+
+Create `apps/admin/.env.local`:
+
+```bash
+VITE_CONVEX_URL=https://<your-deployment>.convex.cloud
+VITE_CLERK_PUBLISHABLE_KEY=pk_test_...
+```
+
+## Contributing
+
+1. Create a feature branch
+2. Make changes
+3. Run `pnpm check-types` and `pnpm lint`
+4. Submit pull request
+
+## Resources
+
+- [Turborepo Documentation](https://turborepo.dev/docs)
+- [Vite Documentation](https://vite.dev/)
+- [Tailwind CSS v4](https://tailwindcss.com/docs)
+- [Convex Documentation](https://docs.convex.dev/)
+- [Clerk Documentation](https://clerk.com/docs)
+- [Vercel Deployment Guide](./DEPLOYMENT.md)
