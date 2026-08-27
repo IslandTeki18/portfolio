@@ -13,8 +13,8 @@ export const SITE = {
   contact: {
     title: "Tell me what's slowing the work down.",
     lede: "A short description of the problem is enough to start. I'll reply within two business days, and the first call is a conversation, not a pitch.",
-    email: "hello@landonmckell.dev",
-    location: "Salt Lake City, UT · MT",
+    email: "landon.roney7923@gmail.com",
+    location: "Spanish Fork, UT · MT",
   },
   links: {
     github: "https://github.com/IslandTeki18",
