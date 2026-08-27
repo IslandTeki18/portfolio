@@ -493,7 +493,7 @@
   }
   body {
     @apply text-foreground;
-    background-color: var(--color-background-primary);
+    background-color: #0c0c0c;
     font-family: var(--font-sans);
   }
 

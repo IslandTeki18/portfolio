@@ -2,3 +2,83 @@
 
 /* Scan portfolio app source files for Tailwind classes */
 @source "../src";
+
+/* Portfolio redesign tokens (source: Claude Design "Portfolio Redesign") */
+@theme {
+  --color-ink: #1b1a18;
+  --color-ink-surface: #221f1d;
+  --color-ink-field: #1d1b19;
+  --color-ink-hover: #262421;
+  --color-ink-sheet: #201e1b;
+  --color-ink-pill: #221f1d;
+  --color-line: #302e2a;
+  --color-line-2: #3a3732;
+  --color-line-hover: #4a4136;
+  --color-fg: #efebe5;
+  --color-fg-body: #c9c3bb;
+  --color-fg-muted: #a9a29a;
+  --color-fg-faint: #8e877f;
+  --color-fg-footer: #857e76;
+  --color-fg-ghost: #5c564f;
+  --color-accent: #c98a6a;
+  --color-accent-hover: #dda184;
+
+  --font-display: "Instrument Sans", system-ui, sans-serif;
+
+  --ease-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  --animate-drift-1: drift1 42s ease-in-out infinite;
+  --animate-drift-2: drift2 56s ease-in-out infinite;
+  --animate-pulse-dot: pulseDot 2.6s ease-in-out infinite;
+  --animate-view-in: viewIn 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  --animate-fade-in: fadeIn 260ms ease both;
+  --animate-sheet-in: sheetIn 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+@keyframes drift1 {
+  0% { transform: translate3d(-6%, -4%, 0) scale(1); }
+  50% { transform: translate3d(8%, 6%, 0) scale(1.15); }
+  100% { transform: translate3d(-6%, -4%, 0) scale(1); }
+}
+@keyframes drift2 {
+  0% { transform: translate3d(6%, 8%, 0) scale(1.1); }
+  50% { transform: translate3d(-8%, -6%, 0) scale(1); }
+  100% { transform: translate3d(6%, 8%, 0) scale(1.1); }
+}
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+@keyframes viewIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes sheetIn {
+  from { opacity: 0; transform: translateY(24px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-fg);
+    font-family: var(--font-display);
+  }
+  ::selection {
+    background: rgba(201, 138, 106, 0.3);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, ::before, ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

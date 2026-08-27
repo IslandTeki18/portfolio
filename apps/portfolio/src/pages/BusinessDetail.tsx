@@ -3,122 +3,78 @@ import { useQuery } from "@repo/lib/convex";
 import { useStorageUrl } from "@repo/lib/use-storage-url";
 import { api } from "@backend/_generated/api";
 import { Spinner } from "@repo/ui/spinner";
+import { cn } from "@repo/ui/lib/utils";
+import Chip from "../components/Chip";
+import Footer from "../components/Footer";
+import { BTN_PILL, BTN_PRIMARY, EYEBROW, LABEL, PLACEHOLDER_ART } from "../components/styles";
 
 export default function BusinessDetail() {
   const { slug } = useParams<{ slug: string }>();
-  const business = useQuery(
-    api.businesses.getPublishedBusinessBySlug,
-    slug ? { slug } : "skip",
-  );
-
+  const business = useQuery(api.businesses.getPublishedBusinessBySlug, slug ? { slug } : "skip");
   const logoUrl = useStorageUrl(api.storage.getFileUrl, business?.logoImageId);
 
-  if (!slug) {
-    return <Navigate to="/404" replace />;
-  }
+  if (!slug || business === null) return <Navigate to="/404" replace />;
 
   if (business === undefined) {
     return (
-      <div className="min-h-screen bg-[#0C0C0C] flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <Spinner size="lg" />
-          <p className="font-mono text-sm text-[#737373]">{"// loading_business..."}</p>
-        </div>
+      <div className="flex min-h-screen items-center justify-center">
+        <Spinner size="lg" />
       </div>
     );
   }
 
-  if (business === null) {
-    return <Navigate to="/404" replace />;
-  }
-
-  const businessName = business.name.toLowerCase().replace(/\s+/g, "_");
-
   return (
-    <div className="min-h-screen bg-[#0C0C0C] p-4 sm:p-6 md:p-10">
-      <div className="mx-auto max-w-3xl space-y-6 md:space-y-8">
-        {/* Back Button */}
-        <Link to="/">
-          <button className="font-mono text-xs md:text-sm text-[#737373] hover:text-[#3B82F6] transition-colors">
-            [← back_to_home]
-          </button>
+    <div className="min-h-screen animate-view-in">
+      <div className="mx-auto max-w-[940px] px-5 pt-8 pb-24 md:px-8 md:pt-10">
+        <Link to="/#ventures" className={cn(BTN_PILL, "font-mono text-[13px] text-fg-muted py-[9px] pr-4 pl-3")}>
+          ← Back to ventures
         </Link>
 
-        {/* Main Content Card */}
-        <div className="border-2 border-[#3B82F6] bg-[#171717]">
-          {/* Header with Logo */}
-          <div className="border-b border-[#252525] p-4 md:p-5">
-            <div className="flex items-center gap-2 md:gap-3">
-              {logoUrl && (
-                <img
-                  src={logoUrl}
-                  alt={`${business.name} logo`}
-                  loading="lazy"
-                  className="h-8 w-8 md:h-10 md:w-10 object-contain flex-shrink-0"
-                />
-              )}
-              <div className="flex items-center gap-2 md:gap-3 min-w-0">
-                <span className="font-mono text-[18px] md:text-[24px] font-semibold text-[#3B82F6]">&gt;</span>
-                <h1 className="font-mono text-[18px] md:text-[24px] font-semibold text-[#E5E5E5] break-all">
-                  {businessName}
-                </h1>
-              </div>
-            </div>
-            {business.active && (
-              <div className="mt-3">
-                <span className="border border-[#22C55E] px-2 py-1 font-mono text-[11px] font-medium text-[#22C55E]">
-                  active
-                </span>
-              </div>
-            )}
+        <div className="mt-8 flex items-center gap-4">
+          <div className={cn("h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-line", PLACEHOLDER_ART)}>
+            {logoUrl && <img src={logoUrl} alt={`${business.name} logo`} className="h-full w-full object-cover" />}
           </div>
+          <div>
+            <div className="flex items-center gap-3 font-mono text-xs">
+              <span className={EYEBROW}>Venture</span>
+              {business.active && <Chip dot>Active</Chip>}
+            </div>
+            <h1 className="mt-2 text-[30px] font-semibold leading-[1.1] tracking-[-0.03em] md:text-[44px]">{business.name}</h1>
+          </div>
+        </div>
+        <p className="mt-[18px] max-w-[640px] text-lg leading-relaxed text-fg-muted text-pretty md:text-[19px]">
+          {business.shortDescription}
+        </p>
 
-          {/* Content */}
-          <div className="p-4 md:p-5 space-y-4 md:space-y-5">
-            {/* Short Description */}
-            <p className="font-mono text-[11px] md:text-xs leading-relaxed text-[#A3A3A3]">
-              {`// ${business.shortDescription}`}
-            </p>
-
-            {/* Long Description */}
-            {business.longDescription && (
-              <div className="border-l-2 border-[#3B82F6] pl-3 md:pl-4 py-2">
-                <p className="font-mono text-[11px] md:text-xs leading-relaxed text-[#E5E5E5] whitespace-pre-wrap">
-                  {business.longDescription}
+        <div className="mt-10 grid gap-8 md:grid-cols-[1.4fr_1fr]">
+          <div className="flex flex-col gap-5">
+            {business.longDescription &&
+              business.longDescription.split(/\n{2,}/).map((para, i) => (
+                <p key={i} className="text-base leading-[1.75] text-fg-body text-pretty whitespace-pre-line">
+                  {para}
                 </p>
-              </div>
-            )}
-
-            {/* Tags */}
+              ))}
+          </div>
+          <div className="flex flex-col gap-6">
             {business.tags && business.tags.length > 0 && (
-              <div className="space-y-2 md:space-y-3">
-                <h2 className="font-mono text-xs md:text-sm font-medium text-[#3B82F6]">~ categories</h2>
+              <div>
+                <p className={cn(LABEL, "mb-3")}>Categories</p>
                 <div className="flex flex-wrap gap-2">
                   {business.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="border border-[#3B82F6] px-3 py-1.5 font-mono text-[11px] font-medium text-[#3B82F6]"
-                    >
-                      {tag.toLowerCase()}
-                    </span>
+                    <Chip key={tag}>{tag}</Chip>
                   ))}
                 </div>
               </div>
             )}
-
-            {/* Website Button */}
             {business.websiteUrl && (
-              <div className="pt-2">
-                <button
-                  onClick={() => window.open(business.websiteUrl, "_blank")}
-                  className="w-full sm:w-auto bg-[#3B82F6] px-4 py-2.5 font-mono text-[11px] md:text-xs font-medium text-[#0C0C0C] hover:bg-[#2563EB] transition-colors text-center"
-                >
-                  [visit_website]
-                </button>
-              </div>
+              <a href={business.websiteUrl} target="_blank" rel="noreferrer" className={cn(BTN_PRIMARY, "px-[22px] py-3")}>
+                Visit website
+              </a>
             )}
           </div>
         </div>
+
+        <Footer />
       </div>
     </div>
   );

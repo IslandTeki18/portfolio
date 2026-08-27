@@ -1,6 +1,9 @@
 import { useStorageUrl } from "@repo/lib/use-storage-url";
 import { api } from "@backend/_generated/api";
+import { cn } from "@repo/ui/lib/utils";
 import type { Resume } from "../types/convex";
+import Chip from "./Chip";
+import { BTN_PRIMARY, BTN_SECONDARY, CARD, LABEL } from "./styles";
 
 interface ResumePreviewProps {
   resume: Resume;
@@ -9,51 +12,60 @@ interface ResumePreviewProps {
 
 export default function ResumePreview({ resume, onViewFull }: ResumePreviewProps) {
   const pdfUrl = useStorageUrl(api.storage.getFileUrl, resume.pdfStorageId);
+  const experience = resume.experience?.slice(0, 3) ?? [];
 
   return (
-    <div className="space-y-3">
-      {resume.headline && (
-        <div className="space-y-1">
-          <p className="font-mono text-[10px] md:text-xs text-[#737373]">$ headline:</p>
-          <p className="font-mono text-xs md:text-[13px] leading-relaxed text-[#E5E5E5]">
+    <div className="grid gap-5 md:grid-cols-[1.3fr_1fr]">
+      <div className={cn(CARD, "p-6 md:p-8")}>
+        {resume.headline && (
+          <p className="text-lg font-medium leading-normal tracking-[-0.01em] text-pretty md:text-xl">
             {resume.headline}
           </p>
-        </div>
-      )}
-
-      {resume.summary && (
-        <div className="space-y-1">
-          <p className="font-mono text-[10px] md:text-xs text-[#737373]">$ summary:</p>
-          <p className="font-mono text-[11px] md:text-xs leading-relaxed text-[#A3A3A3]">
-            {resume.summary}
-          </p>
-        </div>
-      )}
-
-      {resume.skills && resume.skills.length > 0 && (
-        <div className="space-y-1">
-          <p className="font-mono text-[10px] md:text-xs text-[#737373]">$ skills:</p>
-          <p className="font-mono text-[11px] md:text-xs text-[#22C55E] break-words">
-            {resume.skills.slice(0, 10).join(" · ")}
-            {resume.skills.length > 10 && ` · +${resume.skills.length - 10} more`}
-          </p>
-        </div>
-      )}
-
-      <div className="flex flex-col sm:flex-row justify-end gap-2">
-        <button
-          onClick={onViewFull}
-          className="bg-[#F59E0B] px-3 md:px-4 py-1.5 md:py-2 font-mono text-[10px] md:text-xs font-medium text-[#0C0C0C] hover:bg-[#D97706] text-center"
-        >
-          [view_full_resume]
-        </button>
-        {resume.pdfStorageId && pdfUrl && (
-          <button
-            onClick={() => window.open(pdfUrl, "_blank")}
-            className="border border-[#737373] px-3 md:px-4 py-1.5 md:py-2 font-mono text-[10px] md:text-xs font-medium text-[#737373] hover:border-[#A3A3A3] hover:text-[#A3A3A3] text-center"
-          >
-            [download_pdf]
+        )}
+        {resume.summary && (
+          <p className="mt-[18px] text-[15px] leading-[1.7] text-fg-muted text-pretty">{resume.summary}</p>
+        )}
+        <div className="mt-7 flex flex-wrap gap-3">
+          <button type="button" onClick={onViewFull} className={cn(BTN_PRIMARY, "px-[22px] py-3")}>
+            Read full resume
           </button>
+          {pdfUrl && (
+            <a href={pdfUrl} target="_blank" rel="noreferrer" className={cn(BTN_SECONDARY, "px-[22px] py-3")}>
+              Download PDF
+            </a>
+          )}
+        </div>
+      </div>
+
+      <div className={cn(CARD, "flex flex-col gap-[22px] p-6 md:p-8")}>
+        {resume.skills && resume.skills.length > 0 && (
+          <div>
+            <p className={cn(LABEL, "mb-3")}>Stack</p>
+            <div className="flex flex-wrap gap-2">
+              {resume.skills.slice(0, 8).map((skill) => (
+                <Chip key={skill}>{skill}</Chip>
+              ))}
+            </div>
+          </div>
+        )}
+        {experience.length > 0 && (
+          <>
+            <div className="h-px bg-line" />
+            <div className="flex flex-col gap-4">
+              {experience.map((exp, i) => (
+                <div key={i}>
+                  <p className="text-[15px] font-medium">
+                    {exp.role}, {exp.company}
+                  </p>
+                  {(exp.start || exp.end) && (
+                    <p className="mt-1 font-mono text-xs text-fg-faint">
+                      {exp.start} — {exp.end || "present"}
+                    </p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
         )}
       </div>
     </div>

@@ -4,15 +4,39 @@ import { useQuery, useAction } from "@repo/lib/convex";
 import { api } from "@backend/_generated/api";
 import { useToast } from "@repo/ui/toast";
 import { Spinner } from "@repo/ui/spinner";
+import { cn } from "@repo/ui/lib/utils";
+import { SITE } from "../content";
+import Nav from "../components/Nav";
+import Footer from "../components/Footer";
+import Reveal from "../components/Reveal";
+import SectionHeader from "../components/SectionHeader";
 import ProjectCard from "../components/ProjectCard";
 import BusinessCard from "../components/BusinessCard";
 import ResumePreview from "../components/ResumePreview";
 import ResumeModal from "../components/ResumeModal";
+import { BTN_PRIMARY, BTN_SECONDARY, CARD, EYEBROW } from "../components/styles";
 
 interface ContactFormData {
   name?: string;
   email: string;
   message: string;
+}
+
+const FIELD =
+  "w-full rounded-xl border border-line-2 bg-ink-field px-[15px] py-[13px] font-mono text-sm text-fg outline-none transition-colors duration-200 placeholder:text-fg-ghost focus:border-accent focus:bg-ink-hover";
+const FIELD_LABEL = "font-mono text-xs text-fg-muted";
+const FIELD_ERROR = "font-mono text-xs text-accent";
+
+function Loading() {
+  return (
+    <div className="flex justify-center py-12">
+      <Spinner size="md" />
+    </div>
+  );
+}
+
+function Empty({ text }: { text: string }) {
+  return <p className="py-12 text-center font-mono text-sm text-fg-faint">{text}</p>;
 }
 
 export default function Landing() {
@@ -22,7 +46,6 @@ export default function Landing() {
   const projects = useQuery(api.projects.listPublishedProjects);
   const businesses = useQuery(api.businesses.listPublishedBusinesses);
   const resume = useQuery(api.resume.getPublicResume);
-
   const sendContactEmail = useAction(api.contact.sendContactEmail);
 
   const {
@@ -39,14 +62,11 @@ export default function Landing() {
         email: data.email,
         message: data.message,
       });
-
       addToast({
         type: "success",
-        message: "Message sent successfully! I'll get back to you soon.",
+        message: "Message sent. I'll get back to you soon.",
         duration: 5000,
       });
-
-      // Clear form on success
       reset();
     } catch (error) {
       console.error("Failed to send contact email:", error);
@@ -58,166 +78,185 @@ export default function Landing() {
     }
   };
 
+  const activeCount = businesses?.filter((b) => b.active).length ?? 0;
+
   return (
-    <div className="min-h-screen bg-[#0C0C0C] p-4 sm:p-6 md:p-10">
-      <div className="mx-auto max-w-3xl space-y-6 md:space-y-8">
-        <header className="space-y-2 border-b-2 border-[#22C55E] pb-4 md:pb-6">
-          <div className="flex items-center gap-2 md:gap-3">
-            <span className="font-mono text-[24px] md:text-[32px] font-semibold text-[#22C55E]">&gt;</span>
-            <h1 className="font-mono text-[24px] md:text-[32px] font-semibold text-[#E5E5E5] break-all">landon_mckell</h1>
-          </div>
-          <p className="font-mono text-xs md:text-sm text-[#737373]">
-            {"// full stack web developer & mobile developer"}
-          </p>
-        </header>
+    <div className="relative min-h-screen overflow-x-hidden">
+      {/* Ambient background */}
+      <div className="pointer-events-none fixed inset-0 z-0 overflow-hidden" aria-hidden>
+        <div className="absolute -top-1/4 -left-[15%] h-[75vw] w-[75vw] animate-drift-1 rounded-full bg-[radial-gradient(circle,rgba(201,138,106,0.10)_0%,rgba(201,138,106,0)_65%)]" />
+        <div className="absolute -right-[20%] -bottom-[30%] h-[80vw] w-[80vw] animate-drift-2 rounded-full bg-[radial-gradient(circle,rgba(140,158,170,0.07)_0%,rgba(140,158,170,0)_65%)]" />
+      </div>
 
-        {/* Projects Section */}
-        <div className="border-2 border-[#22C55E] bg-[#171717] p-4 md:p-5">
-          <div className="flex items-center justify-between border-b border-[#252525] pb-3">
-            <h2 className="font-mono text-sm md:text-base font-medium text-[#22C55E]">~ projects</h2>
-            <span className="font-mono text-[10px] md:text-xs text-[#737373]">
-              {projects ? `// ${projects.length} items` : "// loading..."}
-            </span>
-          </div>
-          <div className="mt-4">
-            {projects === undefined ? (
-              <div className="flex justify-center py-8">
-                <Spinner size="md" />
-              </div>
-            ) : projects === null || projects.length === 0 ? (
-              <div className="py-8 text-center">
-                <p className="font-mono text-sm text-[#737373]">{"// no projects found"}</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {projects.map((project) => (
-                  <ProjectCard key={project._id} project={project} />
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
+      <div className="relative z-[1]">
+        <Nav />
 
-        {/* Resume Section */}
-        {resume !== undefined && resume !== null && (
-          <>
-            <div className="border-2 border-[#F59E0B] bg-[#171717] p-4 md:p-5">
-              <div className="flex items-center justify-between border-b border-[#252525] pb-3">
-                <h2 className="font-mono text-sm md:text-base font-medium text-[#F59E0B]">~ resume.txt</h2>
-                <span className="font-mono text-[10px] md:text-xs text-[#737373]">{"// ready"}</span>
-              </div>
-              <div className="mt-4">
-                <ResumePreview
-                  resume={resume}
-                  onViewFull={() => setIsResumeModalOpen(true)}
-                />
-              </div>
+        <div id="top" className="mx-auto max-w-[1120px] px-5 pb-24 md:px-8">
+          {/* Hero */}
+          <header className="max-w-[760px] py-16 md:pt-[104px] md:pb-[88px]">
+            <div className="inline-flex items-center gap-2 rounded-full border border-line-2 bg-ink-pill py-1.5 pr-3.5 pl-3">
+              <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" />
+              <span className="font-mono text-xs text-fg-muted">{SITE.availability}</span>
             </div>
-            <ResumeModal
-              resume={resume}
-              isOpen={isResumeModalOpen}
-              onClose={() => setIsResumeModalOpen(false)}
-            />
-          </>
-        )}
+            <h1 className="mt-7 text-4xl font-semibold leading-[1.06] tracking-[-0.03em] text-pretty sm:text-5xl md:text-[58px]">
+              {SITE.hero.title}
+            </h1>
+            <p className="mt-6 max-w-[620px] text-lg leading-relaxed text-fg-muted text-pretty md:text-[19px]">
+              {SITE.hero.lede}
+            </p>
+            <div className="mt-9 flex flex-wrap gap-3">
+              <a href="#work" className={BTN_PRIMARY}>
+                See recent work
+              </a>
+              <a href="#background" className={BTN_SECONDARY}>
+                Read my background
+              </a>
+            </div>
+            <div className="mt-14 flex flex-wrap gap-x-10 gap-y-3 font-mono text-[13px] text-fg-faint">
+              {SITE.hero.stats.map((s) => (
+                <span key={s}>{s}</span>
+              ))}
+            </div>
+          </header>
 
-        {/* Businesses Section */}
-        <div className="border-2 border-[#3B82F6] bg-[#171717] p-4 md:p-5">
-          <div className="flex items-center justify-between border-b border-[#252525] pb-3">
-            <h2 className="font-mono text-sm md:text-base font-medium text-[#3B82F6]">~ businesses</h2>
-            <span className="font-mono text-[10px] md:text-xs text-[#737373]">
-              {businesses ? `// ${businesses.length} active ventures` : "// loading..."}
-            </span>
-          </div>
-          <div className="mt-4">
-            {businesses === undefined ? (
-              <div className="flex justify-center py-8">
-                <Spinner size="md" />
-              </div>
-            ) : businesses === null || businesses.length === 0 ? (
-              <div className="py-8 text-center">
-                <p className="font-mono text-sm text-[#737373]">{"// no businesses listed"}</p>
-              </div>
+          {/* Work */}
+          <section id="work" className="scroll-mt-24 pt-6">
+            <Reveal>
+              <SectionHeader
+                eyebrow="Selected work"
+                title="Recent projects, and what they changed"
+                aside={projects ? `${String(projects.length).padStart(2, "0")} / case studies` : undefined}
+              />
+            </Reveal>
+            {projects === undefined ? (
+              <Loading />
+            ) : !projects || projects.length === 0 ? (
+              <Empty text="No projects published yet." />
             ) : (
-              <div className="space-y-3">
-                {businesses.map((business) => (
-                  <BusinessCard key={business._id} business={business} />
+              <div className="mt-7 grid gap-5 md:grid-cols-2">
+                {projects.map((project, i) => (
+                  <Reveal key={project._id} className={cn("flex", i === 0 && "md:col-span-2")}>
+                    <ProjectCard project={project} index={i} featured={i === 0} />
+                  </Reveal>
                 ))}
               </div>
             )}
-          </div>
-        </div>
+          </section>
 
-        {/* Contact Form */}
-        <div className="border-2 border-[#EF4444] bg-[#171717] p-4 md:p-5">
-          <div className="flex items-center justify-between border-b border-[#252525] pb-3">
-            <h2 className="font-mono text-sm md:text-base font-medium text-[#EF4444]">~ let&apos;s_connect</h2>
-            <span className="font-mono text-[10px] md:text-xs text-[#737373]">{"// send a message"}</span>
-          </div>
-          <div className="mt-4">
-            <form className="space-y-4" onSubmit={handleSubmit(onSubmitContact)}>
-              <div className="space-y-1.5">
-                <label className="font-mono text-xs text-[#737373]">$ name</label>
-                <input
-                  {...register("name")}
-                  type="text"
-                  placeholder="your_name (optional)"
-                  className="w-full border border-[#1F1F1F] bg-[#1A1A1A] px-3 py-2.5 font-mono text-xs text-[#E5E5E5] placeholder-[#525252] focus:border-[#22C55E] focus:outline-none"
-                />
+          {/* Ventures */}
+          <section id="ventures" className="scroll-mt-24 pt-24">
+            <Reveal>
+              <SectionHeader
+                eyebrow="Ventures"
+                title="Businesses I run"
+                aside={businesses ? `${String(activeCount).padStart(2, "0")} active` : undefined}
+              />
+            </Reveal>
+            {businesses === undefined ? (
+              <Loading />
+            ) : !businesses || businesses.length === 0 ? (
+              <Empty text="No businesses listed yet." />
+            ) : (
+              <div className="mt-7 grid gap-5 md:grid-cols-2">
+                {businesses.map((business) => (
+                  <Reveal key={business._id} className="flex [&>a]:flex-1">
+                    <BusinessCard business={business} />
+                  </Reveal>
+                ))}
               </div>
-              <div className="space-y-1.5">
-                <label className="flex items-center gap-1 font-mono text-xs text-[#737373]">
-                  <span>$ email</span>
-                  <span className="text-[#EF4444]">*</span>
-                </label>
-                <input
-                  {...register("email", {
-                    required: "Email is required",
-                    pattern: {
-                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                      message: "Please enter a valid email address",
-                    },
-                  })}
-                  type="email"
-                  placeholder="you@example.com"
-                  className="w-full border border-[#22C55E] bg-[#1A1A1A] px-3 py-2.5 font-mono text-xs text-[#E5E5E5] placeholder-[#525252] focus:border-[#22C55E] focus:outline-none"
-                />
-                {errors.email && (
-                  <p className="font-mono text-xs text-[#EF4444]">{`// ${errors.email.message}`}</p>
-                )}
+            )}
+          </section>
+
+          {/* Background */}
+          {resume && (
+            <section id="background" className="scroll-mt-24 pt-24">
+              <Reveal>
+                <SectionHeader eyebrow="Background" title="How I work" aside="resume.pdf" />
+              </Reveal>
+              <Reveal className="mt-7">
+                <ResumePreview resume={resume} onViewFull={() => setIsResumeModalOpen(true)} />
+              </Reveal>
+              <ResumeModal
+                resume={resume}
+                isOpen={isResumeModalOpen}
+                onClose={() => setIsResumeModalOpen(false)}
+              />
+            </section>
+          )}
+
+          {/* Contact */}
+          <section id="contact" className="scroll-mt-24 pt-24">
+            <Reveal>
+              <div className={cn(CARD, "grid overflow-hidden rounded-[20px] md:grid-cols-[1fr_1.15fr]")}>
+                <div className="flex flex-col justify-between gap-8 border-b border-line p-7 md:border-r md:border-b-0 md:p-11">
+                  <div>
+                    <p className={EYEBROW}>Contact</p>
+                    <h2 className="mt-3 text-[26px] font-semibold leading-[1.15] tracking-[-0.02em] text-pretty md:text-[32px]">
+                      {SITE.contact.title}
+                    </h2>
+                    <p className="mt-4 text-base leading-[1.65] text-fg-muted text-pretty">{SITE.contact.lede}</p>
+                  </div>
+                  <div className="flex flex-col gap-2.5 font-mono text-[13px] text-fg-faint">
+                    <a href={`mailto:${SITE.contact.email}`} className="text-fg-faint hover:text-fg">
+                      {SITE.contact.email}
+                    </a>
+                    <span>{SITE.contact.location}</span>
+                  </div>
+                </div>
+
+                <form className="flex flex-col gap-[18px] p-7 md:p-11" onSubmit={handleSubmit(onSubmitContact)} noValidate>
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="contact-name" className={FIELD_LABEL}>
+                      Name
+                    </label>
+                    <input id="contact-name" {...register("name")} type="text" placeholder="Optional" className={FIELD} />
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="contact-email" className={FIELD_LABEL}>
+                      Email
+                    </label>
+                    <input
+                      id="contact-email"
+                      {...register("email", {
+                        required: "Email is required",
+                        pattern: {
+                          value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                          message: "Please enter a valid email address",
+                        },
+                      })}
+                      type="email"
+                      placeholder="you@company.com"
+                      aria-invalid={errors.email ? true : undefined}
+                      className={FIELD}
+                    />
+                    {errors.email && <p className={FIELD_ERROR}>{errors.email.message}</p>}
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <label htmlFor="contact-message" className={FIELD_LABEL}>
+                      What are you trying to fix?
+                    </label>
+                    <textarea
+                      id="contact-message"
+                      {...register("message", {
+                        required: "Message is required",
+                        minLength: { value: 10, message: "Message must be at least 10 characters" },
+                      })}
+                      rows={5}
+                      placeholder="We schedule 20 techs a day out of a shared spreadsheet and it breaks every time someone calls in sick."
+                      aria-invalid={errors.message ? true : undefined}
+                      className={cn(FIELD, "resize-y leading-[1.55]")}
+                    />
+                    {errors.message && <p className={FIELD_ERROR}>{errors.message.message}</p>}
+                  </div>
+                  <button type="submit" disabled={isSubmitting} className={cn(BTN_PRIMARY, "mt-1 py-3.5")}>
+                    {isSubmitting ? "Sending…" : "Send message"}
+                  </button>
+                </form>
               </div>
-              <div className="space-y-1.5">
-                <label className="flex items-center gap-1 font-mono text-xs text-[#737373]">
-                  <span>$ message</span>
-                  <span className="text-[#EF4444]">*</span>
-                </label>
-                <textarea
-                  {...register("message", {
-                    required: "Message is required",
-                    minLength: {
-                      value: 10,
-                      message: "Message must be at least 10 characters",
-                    },
-                  })}
-                  rows={5}
-                  placeholder="your_message..."
-                  className="w-full border border-[#22C55E] bg-[#1A1A1A] px-3 py-2.5 font-mono text-xs text-[#E5E5E5] placeholder-[#525252] focus:border-[#22C55E] focus:outline-none"
-                />
-                {errors.message && (
-                  <p className="font-mono text-xs text-[#EF4444]">{`// ${errors.message.message}`}</p>
-                )}
-              </div>
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full sm:w-auto bg-[#EF4444] px-5 py-2.5 font-mono text-xs md:text-[13px] font-semibold text-[#0C0C0C] hover:bg-[#DC2626] disabled:opacity-50"
-                >
-                  {isSubmitting ? "[sending...]" : "[send_message]"}
-                </button>
-              </div>
-            </form>
-          </div>
+            </Reveal>
+          </section>
+
+          <Footer />
         </div>
       </div>
     </div>

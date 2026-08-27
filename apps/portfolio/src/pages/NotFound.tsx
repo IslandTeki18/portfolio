@@ -1,32 +1,19 @@
 import { Link } from "react-router-dom";
+import { cn } from "@repo/ui/lib/utils";
+import { BTN_PRIMARY, CARD, EYEBROW } from "../components/styles";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-[#0C0C0C] flex items-center justify-center p-4 sm:p-6 md:p-10">
-      <div className="mx-auto max-w-md w-full">
-        <div className="border-2 border-[#EF4444] bg-[#171717] p-6 md:p-8">
-          <div className="text-center space-y-3 md:space-y-4">
-            {/* 404 */}
-            <h1 className="font-mono text-[56px] md:text-[72px] font-bold text-[#EF4444]">404</h1>
-
-            {/* Error Messages */}
-            <div className="space-y-1 md:space-y-2">
-              <p className="font-mono text-xs md:text-sm text-[#A3A3A3]">{"// page_not_found"}</p>
-              <p className="font-mono text-[11px] md:text-xs text-[#737373]">
-                {"// the requested resource does not exist"}
-              </p>
-            </div>
-
-            {/* Return Home Button */}
-            <div className="pt-3 md:pt-4">
-              <Link to="/">
-                <button className="w-full sm:w-auto bg-[#EF4444] px-5 py-2.5 font-mono text-xs md:text-[13px] font-semibold text-[#0C0C0C] hover:bg-[#DC2626] transition-colors">
-                  [return_home]
-                </button>
-              </Link>
-            </div>
-          </div>
-        </div>
+    <div className="flex min-h-screen items-center justify-center p-5 md:p-10">
+      <div className={cn(CARD, "w-full max-w-md p-8 text-center md:p-10")}>
+        <p className={EYEBROW}>404</p>
+        <h1 className="mt-3 text-[28px] font-semibold tracking-[-0.02em]">That page doesn&apos;t exist.</h1>
+        <p className="mt-3 text-[15px] leading-relaxed text-fg-muted">
+          The link may be old, or the project may have been unpublished.
+        </p>
+        <Link to="/" className={cn(BTN_PRIMARY, "mt-7")}>
+          Back to home
+        </Link>
       </div>
     </div>
   );
