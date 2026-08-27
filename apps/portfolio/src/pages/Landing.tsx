@@ -14,6 +14,7 @@ import ProjectCard from "../components/ProjectCard";
 import BusinessCard from "../components/BusinessCard";
 import ResumePreview from "../components/ResumePreview";
 import ResumeModal from "../components/ResumeModal";
+import HeroCube from "../components/HeroCube";
 import { BTN_PRIMARY, BTN_SECONDARY, CARD, EYEBROW } from "../components/styles";
 
 interface ContactFormData {
@@ -93,29 +94,34 @@ export default function Landing() {
 
         <div id="top" className="mx-auto max-w-[1120px] px-5 pb-24 md:px-8">
           {/* Hero */}
-          <header className="max-w-[760px] py-16 md:pt-[104px] md:pb-[88px]">
-            <div className="inline-flex items-center gap-2 rounded-full border border-line-2 bg-ink-pill py-1.5 pr-3.5 pl-3">
-              <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" />
-              <span className="font-mono text-xs text-fg-muted">{SITE.availability}</span>
+          <header className="grid items-center gap-12 py-16 md:grid-cols-[minmax(0,1fr)_340px] md:pt-[104px] md:pb-[88px]">
+            <div>
+              <div className="inline-flex items-center gap-2 rounded-full border border-line-2 bg-ink-pill py-1.5 pr-3.5 pl-3">
+                <span className="h-1.5 w-1.5 animate-pulse-dot rounded-full bg-accent" />
+                <span className="font-mono text-xs text-fg-muted">{SITE.availability}</span>
+              </div>
+              <h1 className="mt-7 text-4xl font-semibold leading-[1.06] tracking-[-0.03em] text-pretty sm:text-5xl md:text-[58px]">
+                {SITE.hero.title}
+              </h1>
+              <p className="mt-6 max-w-[620px] text-lg leading-relaxed text-fg-muted text-pretty md:text-[19px]">
+                {SITE.hero.lede}
+              </p>
+              <div className="mt-9 flex flex-wrap gap-3">
+                <a href="#work" className={BTN_PRIMARY}>
+                  See recent work
+                </a>
+                <a href="#background" className={BTN_SECONDARY}>
+                  Read my background
+                </a>
+              </div>
+              <div className="mt-14 flex flex-wrap gap-x-10 gap-y-3 font-mono text-[13px] text-fg-faint">
+                {SITE.hero.stats.map((s) => (
+                  <span key={s}>{s}</span>
+                ))}
+              </div>
             </div>
-            <h1 className="mt-7 text-4xl font-semibold leading-[1.06] tracking-[-0.03em] text-pretty sm:text-5xl md:text-[58px]">
-              {SITE.hero.title}
-            </h1>
-            <p className="mt-6 max-w-[620px] text-lg leading-relaxed text-fg-muted text-pretty md:text-[19px]">
-              {SITE.hero.lede}
-            </p>
-            <div className="mt-9 flex flex-wrap gap-3">
-              <a href="#work" className={BTN_PRIMARY}>
-                See recent work
-              </a>
-              <a href="#background" className={BTN_SECONDARY}>
-                Read my background
-              </a>
-            </div>
-            <div className="mt-14 flex flex-wrap gap-x-10 gap-y-3 font-mono text-[13px] text-fg-faint">
-              {SITE.hero.stats.map((s) => (
-                <span key={s}>{s}</span>
-              ))}
+            <div className="hidden md:block">
+              <HeroCube />
             </div>
           </header>
 
@@ -176,11 +182,7 @@ export default function Landing() {
               <Reveal className="mt-7">
                 <ResumePreview resume={resume} onViewFull={() => setIsResumeModalOpen(true)} />
               </Reveal>
-              <ResumeModal
-                resume={resume}
-                isOpen={isResumeModalOpen}
-                onClose={() => setIsResumeModalOpen(false)}
-              />
+              <ResumeModal resume={resume} isOpen={isResumeModalOpen} onClose={() => setIsResumeModalOpen(false)} />
             </section>
           )}
 
@@ -204,12 +206,22 @@ export default function Landing() {
                   </div>
                 </div>
 
-                <form className="flex flex-col gap-[18px] p-7 md:p-11" onSubmit={handleSubmit(onSubmitContact)} noValidate>
+                <form
+                  className="flex flex-col gap-[18px] p-7 md:p-11"
+                  onSubmit={handleSubmit(onSubmitContact)}
+                  noValidate
+                >
                   <div className="flex flex-col gap-2">
                     <label htmlFor="contact-name" className={FIELD_LABEL}>
                       Name
                     </label>
-                    <input id="contact-name" {...register("name")} type="text" placeholder="Optional" className={FIELD} />
+                    <input
+                      id="contact-name"
+                      {...register("name")}
+                      type="text"
+                      placeholder="Optional"
+                      className={FIELD}
+                    />
                   </div>
                   <div className="flex flex-col gap-2">
                     <label htmlFor="contact-email" className={FIELD_LABEL}>
