@@ -11,9 +11,11 @@ export default function Nav() {
   return (
     <nav className="sticky top-0 z-20 border-b border-line bg-ink/80 backdrop-blur-[14px]">
       <div className="mx-auto flex max-w-[1120px] items-center justify-between gap-6 px-5 py-4 md:px-8">
-        <Link to="/" className="flex items-baseline gap-2 text-fg">
-          <span className="font-mono text-[15px] text-accent">&gt;</span>
-          <span className="text-base font-semibold tracking-[-0.01em]">{SITE.name}</span>
+        <Link to="/" aria-label={SITE.name} className="flex items-center gap-[9px] text-fg">
+          <span className="font-mono text-[18px] font-medium tracking-[-0.02em]" aria-hidden="true">
+            <span className="text-accent">[</span>lm<span className="text-accent">]</span>
+          </span>
+          <span className="text-base font-semibold tracking-[-0.02em]">{SITE.name}</span>
         </Link>
         <div className="flex items-center gap-1">
           {NAV_LINKS.map((l) => (
