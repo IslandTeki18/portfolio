@@ -8,7 +8,7 @@ export const SITE = {
   hero: {
     title: "Full stack apps for web, mobile and desktop.",
     lede: "I'm a full stack web and mobile developer. I build scheduling, dispatch and billing tools for trades and service businesses, from the database up to the app your crew uses in the truck.",
-    stats: ["6 years shipping production apps", "React · React Native · Node", "Based in Utah, working remote"],
+    stats: ["8 years shipping production apps", "React · React Native · Node", "Based in Utah, working remote"],
   },
   contact: {
     title: "Tell me what's slowing the work down.",
