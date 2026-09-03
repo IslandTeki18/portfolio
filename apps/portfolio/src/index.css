@@ -95,3 +95,28 @@
     }
   }
 }
+
+/* Printable resume: hidden on screen, the only thing rendered on paper.
+   See components/ResumeDocument.tsx. */
+#resume-print {
+  display: none;
+}
+
+@media print {
+  body > *:not(#resume-print) {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+    color: #000 !important;
+    /* ResumeModal sets overflow:hidden while open; that clips multi-page print. */
+    overflow: visible !important;
+  }
+  #resume-print {
+    display: block !important;
+    font-family: Georgia, "Times New Roman", serif;
+  }
+  @page {
+    margin: 14mm;
+  }
+}

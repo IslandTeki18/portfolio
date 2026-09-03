@@ -70,7 +70,6 @@ export default defineSchema({
         }),
       ),
     ),
-    pdfStorageId: v.optional(v.id("_storage")),
     updatedAt: v.number(),
   }),
 });

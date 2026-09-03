@@ -31,7 +31,6 @@ export const updateResume = mutation({
         }),
       ),
     ),
-    pdfStorageId: v.optional(v.id("_storage")),
   },
   handler: async (ctx, args) => {
     await requireAdmin(ctx);

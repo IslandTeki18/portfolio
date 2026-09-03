@@ -14,6 +14,7 @@ import ProjectCard from "../components/ProjectCard";
 import BusinessCard from "../components/BusinessCard";
 import ResumePreview from "../components/ResumePreview";
 import ResumeModal from "../components/ResumeModal";
+import ResumeDocument from "../components/ResumeDocument";
 import HeroCube from "../components/HeroCube";
 import { BTN_PRIMARY, BTN_SECONDARY, CARD, EYEBROW } from "../components/styles";
 
@@ -177,12 +178,13 @@ export default function Landing() {
           {resume && (
             <section id="background" className="scroll-mt-24 pt-24">
               <Reveal>
-                <SectionHeader eyebrow="Background" title="How I work" aside="resume.pdf" />
+                <SectionHeader eyebrow="Background" title="How I work" aside="resume" />
               </Reveal>
               <Reveal className="mt-7">
                 <ResumePreview resume={resume} onViewFull={() => setIsResumeModalOpen(true)} />
               </Reveal>
               <ResumeModal resume={resume} isOpen={isResumeModalOpen} onClose={() => setIsResumeModalOpen(false)} />
+              <ResumeDocument resume={resume} />
             </section>
           )}
 

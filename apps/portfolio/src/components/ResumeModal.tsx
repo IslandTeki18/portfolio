@@ -1,11 +1,10 @@
 import { useEffect } from "react";
 import { createPortal } from "react-dom";
-import { useStorageUrl } from "@repo/lib/use-storage-url";
-import { api } from "@backend/_generated/api";
 import { cn } from "@repo/ui/lib/utils";
 import type { Resume } from "../types/convex";
 import { SITE } from "../content";
 import Chip from "./Chip";
+import { printResume } from "./ResumeDocument";
 import { BTN_PILL, EYEBROW, LABEL } from "./styles";
 
 interface ResumeModalProps {
@@ -17,7 +16,6 @@ interface ResumeModalProps {
 const Divider = () => <div className="h-px bg-line" />;
 
 export default function ResumeModal({ resume, isOpen, onClose }: ResumeModalProps) {
-  const pdfUrl = useStorageUrl(api.storage.getFileUrl, resume.pdfStorageId);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -49,11 +47,9 @@ export default function ResumeModal({ resume, isOpen, onClose }: ResumeModalProp
             </h2>
           </div>
           <div className="flex items-center gap-2.5">
-            {pdfUrl && (
-              <a href={pdfUrl} target="_blank" rel="noreferrer" className={cn(BTN_PILL, "hidden sm:inline-flex")}>
-                Download PDF
-              </a>
-            )}
+            <button type="button" onClick={printResume} className={cn(BTN_PILL, "hidden sm:inline-flex")}>
+              Download resume
+            </button>
             <button
               type="button"
               onClick={onClose}

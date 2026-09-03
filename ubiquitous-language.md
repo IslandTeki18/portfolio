@@ -44,8 +44,10 @@ _Avoid_: venture (UI label only), company, client.
 
 **Resume**
 The singleton document holding headline, summary, skills, experience entries,
-education entries, and an optional PDF. There is exactly one row in the `resume`
-table; the write path is an upsert, never a create.
+and education entries. There is exactly one row in the `resume` table; the write
+path is an upsert, never a create. There is no stored PDF: the portfolio's
+"Download resume" button prints `ResumeDocument` through the browser's native
+print dialog.
 _Avoid_: CV, profile.
 
 **Experience Entry** / **Education Entry**
@@ -114,9 +116,9 @@ The env-var list checked by `users.upsertMe`. A signed-in user not on it gets no
 admin means editing this env var in the Convex dashboard.
 
 **Storage Id**
-A Convex `_storage` id. Images and the resume PDF are referenced by Storage Id
-on the record (`coverImageId`, `galleryImageIds`, `logoImageId`,
-`pdfStorageId`) and resolved to URLs at render time.
+A Convex `_storage` id. Images are referenced by Storage Id on the record
+(`coverImageId`, `galleryImageIds`, `logoImageId`) and resolved to URLs at
+render time.
 
 ### Presentation
 

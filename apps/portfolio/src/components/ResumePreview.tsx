@@ -1,8 +1,7 @@
-import { useStorageUrl } from "@repo/lib/use-storage-url";
-import { api } from "@backend/_generated/api";
 import { cn } from "@repo/ui/lib/utils";
 import type { Resume } from "../types/convex";
 import Chip from "./Chip";
+import { printResume } from "./ResumeDocument";
 import { BTN_PRIMARY, BTN_SECONDARY, CARD, LABEL } from "./styles";
 
 interface ResumePreviewProps {
@@ -11,7 +10,6 @@ interface ResumePreviewProps {
 }
 
 export default function ResumePreview({ resume, onViewFull }: ResumePreviewProps) {
-  const pdfUrl = useStorageUrl(api.storage.getFileUrl, resume.pdfStorageId);
   const experience = resume.experience?.slice(0, 3) ?? [];
 
   return (
@@ -29,11 +27,9 @@ export default function ResumePreview({ resume, onViewFull }: ResumePreviewProps
           <button type="button" onClick={onViewFull} className={cn(BTN_PRIMARY, "px-[22px] py-3")}>
             Read full resume
           </button>
-          {pdfUrl && (
-            <a href={pdfUrl} target="_blank" rel="noreferrer" className={cn(BTN_SECONDARY, "px-[22px] py-3")}>
-              Download PDF
-            </a>
-          )}
+          <button type="button" onClick={printResume} className={cn(BTN_SECONDARY, "px-[22px] py-3")}>
+            Download resume
+          </button>
         </div>
       </div>
 

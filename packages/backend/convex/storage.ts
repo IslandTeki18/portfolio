@@ -173,25 +173,3 @@ export const removeBusinessLogo = mutation({
   },
 });
 
-/**
- * Admin: Remove the PDF from the resume singleton
- * Deletes the file from storage and clears the field
- */
-export const removeResumePdf = mutation({
-  args: {},
-  handler: async (ctx) => {
-    await requireAdmin(ctx);
-
-    const resume = await ctx.db.query("resume").first();
-    if (!resume) throw new Error("Resume not found");
-
-    if (resume.pdfStorageId) {
-      await ctx.storage.delete(resume.pdfStorageId);
-    }
-
-    await ctx.db.patch(resume._id, {
-      pdfStorageId: undefined,
-      updatedAt: Date.now(),
-    });
-  },
-});

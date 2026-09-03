@@ -2,16 +2,12 @@ import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm, useFieldArray } from "react-hook-form";
 import { useQuery, useMutation } from "@repo/lib/convex";
-import { useUpload } from "@repo/lib/use-upload";
-import { useStorageUrl } from "@repo/lib/use-storage-url";
 import { api } from "@backend/_generated/api";
-import { Id } from "@backend/_generated/dataModel";
 import { useToast } from "@repo/ui/toast";
 import { Button } from "@repo/ui/button";
 import { Input } from "@repo/ui/input";
 import { Textarea } from "@repo/ui/textarea";
 import { Spinner } from "@repo/ui/spinner";
-import { FileUpload, FileIndicator } from "@repo/ui/file-upload";
 import { ExperienceEntry } from "../components/ExperienceEntry";
 import { EducationEntry } from "../components/EducationEntry";
 import { AddButton, PageHeader, Section } from "../components/AdminLayout";
@@ -39,13 +35,6 @@ export default function Resume() {
   const { addToast } = useToast();
   const resume = useQuery(api.resume.getResume);
   const updateResume = useMutation(api.resume.updateResume);
-  const removeResumePdf = useMutation(api.storage.removeResumePdf);
-  const { upload, isUploading, error: uploadError } = useUpload(
-    api.storage.generateUploadUrl,
-  );
-
-  const pdfUrl = useStorageUrl(api.storage.getFileUrl, resume?.pdfStorageId);
-
   const {
     register,
     handleSubmit,
@@ -84,26 +73,6 @@ export default function Resume() {
     }
   }, [resume, reset]);
 
-  const handlePdfUpload = async (file: File) => {
-    try {
-      const storageId = await upload(file);
-      await updateResume({
-        pdfStorageId: storageId as Id<"_storage">,
-      });
-      addToast({ type: "success", message: "PDF uploaded" });
-    } catch {
-      addToast({ type: "error", message: "Failed to upload PDF" });
-    }
-  };
-
-  const handleRemovePdf = async () => {
-    try {
-      await removeResumePdf();
-      addToast({ type: "success", message: "PDF removed" });
-    } catch {
-      addToast({ type: "error", message: "Failed to remove PDF" });
-    }
-  };
 
   const onSubmit = async (data: ResumeFormData) => {
     try {
@@ -255,25 +224,6 @@ export default function Resume() {
           )}
         </Section>
 
-        <Section label="PDF">
-          {resume?.pdfStorageId && pdfUrl ? (
-            <FileIndicator
-              fileName="Resume.pdf"
-              url={pdfUrl}
-              onRemove={handleRemovePdf}
-            />
-          ) : (
-            <FileUpload
-              accept=".pdf,application/pdf"
-              isUploading={isUploading}
-              error={uploadError ?? undefined}
-              onFileSelect={handlePdfUpload}
-              helperText="Upload your resume as a PDF file"
-              fullWidth
-              size="sm"
-            />
-          )}
-        </Section>
 
         <div className="flex gap-2.5 border-t border-border pt-6">
           <Button type="submit" size="sm" disabled={isSubmitting} className="rounded-md">
