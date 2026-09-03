@@ -100,10 +100,13 @@ const toastVariants = cva(
   {
     variants: {
       type: {
-        success: "bg-green-50 dark:bg-green-900 border-green-500 text-green-800 dark:text-green-100",
-        error: "bg-red-50 dark:bg-red-900 border-red-500 text-red-800 dark:text-red-100",
-        warning: "bg-yellow-50 dark:bg-yellow-900 border-yellow-500 text-yellow-800 dark:text-yellow-100",
-        info: "bg-blue-50 dark:bg-blue-900 border-blue-500 text-blue-800 dark:text-blue-100",
+        success:
+          "bg-control-positive-fill border-control-positive-label text-control-positive-label",
+        error:
+          "bg-control-critical-fill border-control-critical-label text-control-critical-label",
+        warning:
+          "bg-control-attention-fill border-control-attention-label text-control-attention-label",
+        info: "bg-control-secondary-fill border-control-seconary-label text-control-seconary-label",
       },
     },
     defaultVariants: {

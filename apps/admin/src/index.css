@@ -49,6 +49,18 @@
 
   --brand-primary: #c98a6a;
   --brand-secondary: #c9c3bb;
+
+  /* Status surfaces (toasts, form error/success blocks). */
+  --control-primary-fill: #c98a6a;
+  --control-primary-label: #1b1a18;
+  --control-positive-fill: #1e2825;
+  --control-positive-label: #8fa9a0;
+  --control-critical-fill: #2a1e1b;
+  --control-critical-label: #e07a6a;
+  --control-attention-fill: #2a2419;
+  --control-attention-label: #d3ae6d;
+  --control-secondary-fill: #262421;
+  --control-seconary-label: #c9c3bb;
 }
 
 body {

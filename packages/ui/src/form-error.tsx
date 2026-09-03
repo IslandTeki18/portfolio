@@ -16,7 +16,7 @@ export const FormError = forwardRef<HTMLDivElement, FormErrorProps>(
       <div
         ref={ref}
         className={cn(
-          "p-3 rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800",
+          "p-3 rounded-md bg-control-critical-fill border border-control-critical-label/30",
           className
         )}
         role="alert"
@@ -25,7 +25,7 @@ export const FormError = forwardRef<HTMLDivElement, FormErrorProps>(
         <div className="flex">
           <div className="flex-shrink-0">
             <svg
-              className="h-5 w-5 text-red-400"
+              className="h-5 w-5 text-control-critical-label"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -38,12 +38,12 @@ export const FormError = forwardRef<HTMLDivElement, FormErrorProps>(
           </div>
           <div className="ml-3">
             {message && (
-              <p className="text-sm font-medium text-red-800 dark:text-red-200">
+              <p className="text-sm font-medium text-control-critical-label">
                 {message}
               </p>
             )}
             {errors && errors.length > 0 && (
-              <ul className="mt-2 text-sm text-red-700 dark:text-red-300 list-disc list-inside space-y-1">
+              <ul className="mt-2 text-sm text-control-critical-label list-disc list-inside space-y-1">
                 {errors.map((error) => {
                   const key = typeof error === "string" ? error : error.id;
                   const msg = typeof error === "string" ? error : error.message;
@@ -74,7 +74,7 @@ export const FormSuccess = forwardRef<HTMLDivElement, FormSuccessProps>(
       <div
         ref={ref}
         className={cn(
-          "p-3 rounded-md bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800",
+          "p-3 rounded-md bg-control-positive-fill border border-control-positive-label/30",
           className
         )}
         role="alert"
@@ -83,7 +83,7 @@ export const FormSuccess = forwardRef<HTMLDivElement, FormSuccessProps>(
         <div className="flex">
           <div className="flex-shrink-0">
             <svg
-              className="h-5 w-5 text-green-400"
+              className="h-5 w-5 text-control-positive-label"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -95,7 +95,7 @@ export const FormSuccess = forwardRef<HTMLDivElement, FormSuccessProps>(
             </svg>
           </div>
           <div className="ml-3">
-            <p className="text-sm font-medium text-green-800 dark:text-green-200">
+            <p className="text-sm font-medium text-control-positive-label">
               {message}
             </p>
           </div>
