@@ -23,7 +23,9 @@
   --color-accent: #c98a6a;
   --color-accent-hover: #dda184;
 
-  --font-display: "Instrument Sans", system-ui, sans-serif;
+  --font-display: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
 
   --ease-soft: cubic-bezier(0.2, 0.8, 0.2, 1);
 
