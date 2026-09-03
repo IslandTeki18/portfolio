@@ -33,7 +33,19 @@ export default function AuthGate({ children }: AuthGateProps) {
   if (!isSignedIn) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background-primary">
-        <SignIn routing="hash" />
+        <SignIn
+          routing="hash"
+          appearance={{
+            variables: {
+              colorPrimary: "#c98a6a",
+              colorBackground: "#1d1b19",
+              colorText: "#efebe5",
+              colorInputBackground: "#211e1b",
+              colorInputText: "#efebe5",
+              borderRadius: "0.875rem",
+            },
+          }}
+        />
       </div>
     );
   }

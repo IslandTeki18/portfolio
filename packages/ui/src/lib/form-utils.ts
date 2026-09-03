@@ -32,35 +32,35 @@ export function getAriaDescribedBy(
 
 /**
  * Common base styles for form input elements.
- * Includes padding, border, focus states, disabled states, and dark mode support.
+ * Includes padding, border, focus and disabled states. Colors come from theme tokens.
  */
 export const formInputBaseStyles =
-  "px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100";
+  "px-3 py-2.5 border rounded-md focus:outline-none focus:ring-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-background-secondary text-foreground";
 
 /**
  * Styles for form inputs in normal (non-error) state.
  */
 export const formInputNormalStyles =
-  "border-gray-300 dark:border-gray-600 focus:border-blue-500 focus:ring-blue-500";
+  "border-input focus:border-primary focus:ring-primary";
 
 /**
  * Styles for form inputs in error state.
  */
 export const formInputErrorStyles =
-  "border-red-500 focus:border-red-500 focus:ring-red-500";
+  "border-destructive focus:border-destructive focus:ring-destructive";
 
 /**
  * Common styles for form labels.
  */
 export const formLabelStyles =
-  "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1";
+  "block text-[13px] font-medium text-muted-foreground mb-1.5";
 
 /**
  * Common styles for error messages.
  */
-export const formErrorStyles = "mt-1 text-sm text-red-600 dark:text-red-400";
+export const formErrorStyles = "mt-1.5 text-xs text-destructive";
 
 /**
  * Common styles for helper text.
  */
-export const formHelperStyles = "mt-1 text-sm text-gray-500 dark:text-gray-400";
+export const formHelperStyles = "mt-1.5 text-xs text-label-secondary";

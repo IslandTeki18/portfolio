@@ -8,10 +8,15 @@ import { api } from "@backend/_generated/api";
 import { Id } from "@backend/_generated/dataModel";
 import { useToast } from "@repo/ui/toast";
 import { Button } from "@repo/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui/card";
 import { Input } from "@repo/ui/input";
 import { Textarea } from "@repo/ui/textarea";
 import { FileUpload, ImagePreview } from "@repo/ui/file-upload";
+import {
+  BackLink,
+  CheckboxField,
+  PageHeader,
+  Section,
+} from "../components/AdminLayout";
 
 interface BusinessFormData {
   name: string;
@@ -86,139 +91,116 @@ export default function BusinessCreate() {
   };
 
   return (
-    <div className="min-h-screen bg-background-primary p-8">
-      <div className="mx-auto max-w-3xl space-y-6">
-        <Link to="/businesses">
-          <Button variant="ghost">&larr; Back to Businesses</Button>
-        </Link>
+    <>
+      <BackLink to="/businesses">Businesses</BackLink>
+      <PageHeader title="New business" />
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Create Business</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-              <Input
-                {...register("name", { required: "Name is required" })}
-                label="Name"
-                placeholder="Business name"
-                required
-                fullWidth
-                error={errors.name?.message}
-              />
-              <Input
-                {...register("slug", {
-                  required: "Slug is required",
-                  pattern: {
-                    value: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
-                    message: "Slug must be lowercase with hyphens only",
-                  },
-                })}
-                label="Slug"
-                placeholder="business-slug"
-                required
-                fullWidth
-                error={errors.slug?.message}
-                helperText="Lowercase letters, numbers, and hyphens only"
-              />
-              <Textarea
-                {...register("shortDescription", {
-                  required: "Short description is required",
-                })}
-                label="Short Description"
-                placeholder="Brief summary..."
-                rows={2}
-                required
-                fullWidth
-                error={errors.shortDescription?.message}
-              />
-              <Textarea
-                {...register("longDescription")}
-                label="Long Description"
-                placeholder="Detailed description..."
-                rows={6}
-                fullWidth
-              />
+      <form className="flex flex-col gap-8" onSubmit={handleSubmit(onSubmit)}>
+        <Section label="Basics">
+          <Input
+            {...register("name", { required: "Name is required" })}
+            label="Name"
+            placeholder="Business name"
+            required
+            fullWidth
+            error={errors.name?.message}
+          />
+          <Input
+            {...register("slug", {
+              required: "Slug is required",
+              pattern: {
+                value: /^[a-z0-9]+(?:-[a-z0-9]+)*$/,
+                message: "Slug must be lowercase with hyphens only",
+              },
+            })}
+            label="Slug"
+            placeholder="business-slug"
+            required
+            fullWidth
+            className="font-mono text-sm"
+            error={errors.slug?.message}
+            helperText="Lowercase letters, numbers, and hyphens"
+          />
+          <Textarea
+            {...register("shortDescription", {
+              required: "Short description is required",
+            })}
+            label="Short description"
+            placeholder="Brief summary..."
+            rows={2}
+            required
+            fullWidth
+            error={errors.shortDescription?.message}
+          />
+          <Textarea
+            {...register("longDescription")}
+            label="Long description"
+            placeholder="Detailed description..."
+            rows={6}
+            fullWidth
+          />
+        </Section>
 
-              <div>
-                {logoImageId && logoUrl ? (
-                  <div>
-                    <label className="mb-1.5 block text-sm font-medium text-foreground">
-                      Logo
-                    </label>
-                    <ImagePreview
-                      url={logoUrl}
-                      alt="Logo"
-                      size="md"
-                      onRemove={() => setLogoImageId(undefined)}
-                    />
-                  </div>
-                ) : (
-                  <FileUpload
-                    label="Logo"
-                    accept="image/*"
-                    isUploading={isUploading}
-                    error={uploadError ?? undefined}
-                    onFileSelect={handleLogoUpload}
-                    helperText="Square image recommended"
-                    fullWidth
-                  />
-                )}
-              </div>
+        <Section label="Logo">
+          {logoImageId && logoUrl ? (
+            <ImagePreview
+              url={logoUrl}
+              alt="Logo"
+              size="md"
+              onRemove={() => setLogoImageId(undefined)}
+            />
+          ) : (
+            <FileUpload
+              accept="image/*"
+              isUploading={isUploading}
+              error={uploadError ?? undefined}
+              onFileSelect={handleLogoUpload}
+              helperText="Square image. Drop a file or click to browse."
+              fullWidth
+              size="sm"
+            />
+          )}
+        </Section>
 
-              <Input
-                {...register("websiteUrl")}
-                label="Website URL"
-                type="url"
-                placeholder="https://..."
-                fullWidth
-              />
-              <Input
-                {...register("tags")}
-                label="Tags"
-                placeholder="saas, consulting (comma-separated)"
-                fullWidth
-                helperText="Tags for categorization"
-              />
-              <Input
-                {...register("sortOrder", { valueAsNumber: true })}
-                label="Sort Order"
-                type="number"
-                placeholder="0"
-                fullWidth
-                helperText="Lower numbers appear first"
-              />
-              <label className="flex items-center gap-2 text-sm text-foreground">
-                <input
-                  type="checkbox"
-                  {...register("active")}
-                  className="rounded border-border"
-                />
-                Active
-              </label>
-              <label className="flex items-center gap-2 text-sm text-foreground">
-                <input
-                  type="checkbox"
-                  {...register("featured")}
-                  className="rounded border-border"
-                />
-                Featured
-              </label>
+        <Section label="Details">
+          <Input
+            {...register("websiteUrl")}
+            label="Website URL"
+            type="url"
+            placeholder="https://..."
+            fullWidth
+          />
+          <Input
+            {...register("tags")}
+            label="Tags"
+            placeholder="saas, consulting"
+            fullWidth
+            helperText="Comma-separated"
+          />
+          <div className="grid grid-cols-3 items-end gap-3.5">
+            <Input
+              {...register("sortOrder", { valueAsNumber: true })}
+              label="Sort order"
+              type="number"
+              placeholder="0"
+              fullWidth
+            />
+            <CheckboxField label="Active" {...register("active")} />
+            <CheckboxField label="Featured" {...register("featured")} />
+          </div>
+        </Section>
 
-              <div className="flex gap-3 pt-2">
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Creating..." : "Create"}
-                </Button>
-                <Link to="/businesses">
-                  <Button variant="outline" type="button">
-                    Cancel
-                  </Button>
-                </Link>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+        <div className="flex gap-2.5 border-t border-border pt-6">
+          <Button type="submit" size="sm" disabled={isSubmitting || isUploading} className="rounded-md">
+            {isSubmitting ? "Creating..." : "Create"}
+          </Button>
+          <Link to="/businesses">
+            <Button variant="outline" size="sm" type="button" className="rounded-md border">
+              Cancel
+            </Button>
+          </Link>
+        </div>
+      </form>
+    </>
   );
 }

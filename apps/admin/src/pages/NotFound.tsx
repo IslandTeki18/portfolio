@@ -3,11 +3,15 @@ import { Button } from "@repo/ui/button";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background-primary p-8">
-      <h1 className="text-5xl font-bold text-label-primary">404</h1>
-      <p className="mt-2 text-label-secondary">Page not found.</p>
-      <Link to="/" className="mt-6">
-        <Button variant="primary">Back to Dashboard</Button>
+    <div className="flex flex-col items-start gap-4 py-16">
+      <h1 className="m-0 font-mono text-5xl font-medium text-label-secondary">
+        404
+      </h1>
+      <p className="m-0 text-base text-muted-foreground">Page not found.</p>
+      <Link to="/">
+        <Button variant="primary" size="sm" className="rounded-md">
+          Back to dashboard
+        </Button>
       </Link>
     </div>
   );

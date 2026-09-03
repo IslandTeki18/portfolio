@@ -1,163 +1,113 @@
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@repo/lib/convex";
+import { useStorageUrl } from "@repo/lib/use-storage-url";
 import { api } from "@backend/_generated/api";
 import { Id } from "@backend/_generated/dataModel";
 import { Button } from "@repo/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui/card";
 import { Spinner } from "@repo/ui/spinner";
+import {
+  BackLink,
+  Chips,
+  DetailField,
+  FeaturedTag,
+  MetaBar,
+  PageTitle,
+  StatusPill,
+} from "../components/AdminLayout";
 
 export default function BusinessDetail() {
   const { id } = useParams<{ id: string }>();
   const business = useQuery(
     api.businesses.getBusinessById,
-    id ? { id: id as Id<"businesses"> } : "skip"
+    id ? { id: id as Id<"businesses"> } : "skip",
   );
+  const logoUrl = useStorageUrl(api.storage.getFileUrl, business?.logoImageId);
 
   if (business === undefined) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background-primary">
-        <Spinner variant="primary" size="lg" />
-      </div>
-    );
+    return <Spinner variant="primary" size="lg" className="py-24" />;
   }
 
   if (business === null) {
     return (
-      <div className="min-h-screen bg-background-primary p-8">
-        <div className="mx-auto max-w-3xl">
-          <p className="text-destructive">Business not found</p>
-          <Link to="/businesses">
-            <Button variant="ghost" className="mt-4">
-              &larr; Back to Businesses
-            </Button>
-          </Link>
-        </div>
-      </div>
+      <>
+        <BackLink to="/businesses">Businesses</BackLink>
+        <p className="text-destructive">Business not found</p>
+      </>
     );
   }
 
-  const isDeleted = business.deletedAt !== null;
-
   return (
-    <div className="min-h-screen bg-background-primary p-8">
-      <div className="mx-auto max-w-3xl space-y-6">
-        <div className="flex items-center justify-between">
-          <Link to="/businesses">
-            <Button variant="ghost">&larr; Back to Businesses</Button>
-          </Link>
-          <Link to={`/businesses/${id}/edit`}>
-            <Button variant="primary">Edit Business</Button>
-          </Link>
-        </div>
+    <>
+      <BackLink to="/businesses">Businesses</BackLink>
 
-        <Card>
-          <CardHeader>
-            <div className="flex items-start justify-between gap-4">
-              <CardTitle>{business.name}</CardTitle>
-              <div className="flex gap-2">
-                <span
-                  className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ${
-                    business.active
-                      ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                      : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300"
-                  }`}
-                >
-                  {business.active ? "Active" : "Inactive"}
+      <div className="flex items-start justify-between gap-6">
+        <div className="flex items-center gap-5">
+          <div className="size-16 shrink-0 overflow-hidden rounded-2xl border border-border bg-background-secondary">
+            {logoUrl && (
+              <img
+                src={logoUrl}
+                alt=""
+                className="size-full object-cover"
+              />
+            )}
+          </div>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-3">
+              <StatusPill on={business.active}>
+                {business.active ? "active" : "inactive"}
+              </StatusPill>
+              {business.featured && <FeaturedTag />}
+              {business.deletedAt && (
+                <span className="font-mono text-[11px] tracking-[0.04em] text-destructive">
+                  deleted
                 </span>
-                {business.featured && (
-                  <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                    Featured
-                  </span>
-                )}
-                {isDeleted && (
-                  <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">
-                    Deleted
-                  </span>
-                )}
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Slug */}
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">Slug</h3>
-              <p className="text-foreground font-mono text-sm">/{business.slug}</p>
-            </div>
-
-            {/* Short Description */}
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">
-                Short Description
-              </h3>
-              <p className="text-foreground">{business.shortDescription}</p>
-            </div>
-
-            {/* Long Description */}
-            {business.longDescription && (
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground mb-1">
-                  Long Description
-                </h3>
-                <p className="text-foreground whitespace-pre-wrap">
-                  {business.longDescription}
-                </p>
-              </div>
-            )}
-
-            {/* Website URL */}
-            {business.websiteUrl && (
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground mb-1">
-                  Website
-                </h3>
-                <a
-                  href={business.websiteUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline text-sm break-all"
-                >
-                  {business.websiteUrl}
-                </a>
-              </div>
-            )}
-
-            {/* Tags */}
-            {business.tags && business.tags.length > 0 && (
-              <div>
-                <h3 className="text-sm font-medium text-muted-foreground mb-2">Tags</h3>
-                <div className="flex flex-wrap gap-2">
-                  {business.tags.map((tag, index) => (
-                    <span
-                      key={index}
-                      className="inline-flex items-center rounded-md px-2.5 py-1 text-xs font-medium bg-secondary/10 text-secondary border border-secondary/20"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Metadata */}
-            <div className="border-t border-border pt-4 grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-              {business.sortOrder !== undefined && (
-                <div>
-                  <h3 className="text-muted-foreground mb-1">Sort Order</h3>
-                  <p className="text-foreground font-medium">{business.sortOrder}</p>
-                </div>
               )}
             </div>
-
-            {/* Business ID */}
-            <div className="border-t border-border pt-4">
-              <h3 className="text-xs font-medium text-muted-foreground mb-1">
-                Business ID
-              </h3>
-              <p className="text-xs font-mono text-muted-foreground">{id}</p>
-            </div>
-          </CardContent>
-        </Card>
+            <PageTitle>{business.name}</PageTitle>
+            {business.websiteUrl && (
+              <a
+                href={business.websiteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-xs text-label-secondary underline-offset-4 hover:underline"
+              >
+                {business.websiteUrl} &#8599;
+              </a>
+            )}
+          </div>
+        </div>
+        <Link to={`/businesses/${id}/edit`}>
+          <Button variant="outline" size="sm" className="rounded-md whitespace-nowrap border">
+            Edit
+          </Button>
+        </Link>
       </div>
-    </div>
+
+      <div className="grid grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] gap-10 border-t border-border pt-7">
+        <div className="flex flex-col gap-6">
+          <p className="m-0 text-[17px] leading-relaxed text-pretty">
+            {business.shortDescription}
+          </p>
+          {business.longDescription && (
+            <p className="m-0 whitespace-pre-wrap text-[15px] leading-[1.7] text-brand-secondary text-pretty">
+              {business.longDescription}
+            </p>
+          )}
+        </div>
+
+        <div className="flex flex-col gap-6">
+          {business.tags && business.tags.length > 0 && (
+            <DetailField label="Tags">
+              <Chips items={business.tags} />
+            </DetailField>
+          )}
+          <DetailField label="Slug">
+            <span className="font-mono text-[13px]">/{business.slug}</span>
+          </DetailField>
+        </div>
+      </div>
+
+      <MetaBar items={[`sort ${business.sortOrder ?? "—"}`, `id ${id}`]} />
+    </>
   );
 }

@@ -8,13 +8,13 @@ import { api } from "@backend/_generated/api";
 import { Id } from "@backend/_generated/dataModel";
 import { useToast } from "@repo/ui/toast";
 import { Button } from "@repo/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@repo/ui/card";
 import { Input } from "@repo/ui/input";
 import { Textarea } from "@repo/ui/textarea";
 import { Spinner } from "@repo/ui/spinner";
 import { FileUpload, FileIndicator } from "@repo/ui/file-upload";
 import { ExperienceEntry } from "../components/ExperienceEntry";
 import { EducationEntry } from "../components/EducationEntry";
+import { AddButton, PageHeader, Section } from "../components/AdminLayout";
 
 interface ResumeFormData {
   headline?: string;
@@ -148,167 +148,144 @@ export default function Resume() {
   };
 
   if (resume === undefined) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background-primary">
-        <Spinner variant="primary" size="lg" />
-      </div>
-    );
+    return <Spinner variant="primary" size="lg" className="py-24" />;
   }
 
   return (
-    <div className="min-h-screen bg-background-primary p-8">
-      <div className="mx-auto max-w-3xl space-y-6">
-        <Link to="/">
-          <Button variant="ghost">&larr; Dashboard</Button>
-        </Link>
+    <>
+      <PageHeader
+        title="Resume"
+        action={
+          resume && (
+            <span className="font-mono text-xs text-label-secondary">
+              updated {new Date(resume.updatedAt).toLocaleDateString()}
+            </span>
+          )
+        }
+      />
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Resume</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-              <Input
-                {...register("headline")}
-                label="Headline"
-                placeholder="Software Engineer | Full-Stack Developer"
-                fullWidth
-                helperText="Your professional title or tagline"
-              />
-              <Textarea
-                {...register("summary")}
-                label="Summary"
-                placeholder="Write your professional summary..."
-                rows={6}
-                fullWidth
-                helperText="A brief overview of your background and expertise"
-              />
-              <Input
-                {...register("skills")}
-                label="Skills"
-                placeholder="React, TypeScript, Node.js (comma-separated)"
-                fullWidth
-                helperText="List your key technical skills"
-              />
+      <form className="flex flex-col gap-8" onSubmit={handleSubmit(onSubmit)}>
+        <Section label="Profile">
+          <Input
+            {...register("headline")}
+            label="Headline"
+            placeholder="Software Engineer | Full-Stack Developer"
+            fullWidth
+          />
+          <Textarea
+            {...register("summary")}
+            label="Summary"
+            placeholder="Write your professional summary..."
+            rows={5}
+            fullWidth
+          />
+          <Input
+            {...register("skills")}
+            label="Skills"
+            placeholder="React, TypeScript, Node.js"
+            fullWidth
+            helperText="Comma-separated"
+          />
+        </Section>
 
-              <div className="space-y-4 pt-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-foreground">
-                    Experience
-                  </h3>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    type="button"
-                    onClick={() =>
-                      appendExperience({
-                        company: "",
-                        role: "",
-                        start: "",
-                        end: "",
-                        bullets: [],
-                      })
-                    }
-                  >
-                    + Add Experience
-                  </Button>
-                </div>
-                {experienceFields.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">
-                    No experience entries yet. Click &quot;Add Experience&quot; to get
-                    started.
-                  </p>
-                ) : (
-                  <div className="space-y-4">
-                    {experienceFields.map((field, index) => (
-                      <ExperienceEntry
-                        key={field.id}
-                        index={index}
-                        register={register}
-                        control={control}
-                        errors={errors}
-                        onRemove={() => removeExperience(index)}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
+        <Section
+          label="Experience"
+          aside={
+            <AddButton
+              onClick={() =>
+                appendExperience({
+                  company: "",
+                  role: "",
+                  start: "",
+                  end: "",
+                  bullets: [],
+                })
+              }
+            >
+              + Add role
+            </AddButton>
+          }
+        >
+          {experienceFields.length === 0 ? (
+            <p className="m-0 text-sm text-muted-foreground">
+              No roles yet.
+            </p>
+          ) : (
+            <div className="flex flex-col gap-6">
+              {experienceFields.map((field, index) => (
+                <ExperienceEntry
+                  key={field.id}
+                  index={index}
+                  register={register}
+                  control={control}
+                  errors={errors}
+                  onRemove={() => removeExperience(index)}
+                />
+              ))}
+            </div>
+          )}
+        </Section>
 
-              <div className="space-y-4 pt-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-foreground">
-                    Education
-                  </h3>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    type="button"
-                    onClick={() =>
-                      appendEducation({ school: "", degree: "", year: "" })
-                    }
-                  >
-                    + Add Education
-                  </Button>
-                </div>
-                {educationFields.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">
-                    No education entries yet. Click &quot;Add Education&quot; to get
-                    started.
-                  </p>
-                ) : (
-                  <div className="space-y-4">
-                    {educationFields.map((field, index) => (
-                      <EducationEntry
-                        key={field.id}
-                        index={index}
-                        register={register}
-                        errors={errors}
-                        onRemove={() => removeEducation(index)}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
+        <Section
+          label="Education"
+          aside={
+            <AddButton
+              onClick={() => appendEducation({ school: "", degree: "", year: "" })}
+            >
+              + Add school
+            </AddButton>
+          }
+        >
+          {educationFields.length === 0 ? (
+            <p className="m-0 text-sm text-muted-foreground">
+              No schools yet.
+            </p>
+          ) : (
+            <div className="flex flex-col gap-6">
+              {educationFields.map((field, index) => (
+                <EducationEntry
+                  key={field.id}
+                  index={index}
+                  register={register}
+                  errors={errors}
+                  onRemove={() => removeEducation(index)}
+                />
+              ))}
+            </div>
+          )}
+        </Section>
 
-              <div>
-                {resume?.pdfStorageId && pdfUrl ? (
-                  <div>
-                    <label className="mb-1.5 block text-sm font-medium text-foreground">
-                      Resume PDF
-                    </label>
-                    <FileIndicator
-                      fileName="Resume.pdf"
-                      url={pdfUrl}
-                      onRemove={handleRemovePdf}
-                    />
-                  </div>
-                ) : (
-                  <FileUpload
-                    label="Resume PDF"
-                    accept=".pdf,application/pdf"
-                    isUploading={isUploading}
-                    error={uploadError ?? undefined}
-                    onFileSelect={handlePdfUpload}
-                    helperText="Upload your resume as a PDF file"
-                    fullWidth
-                  />
-                )}
-              </div>
+        <Section label="PDF">
+          {resume?.pdfStorageId && pdfUrl ? (
+            <FileIndicator
+              fileName="Resume.pdf"
+              url={pdfUrl}
+              onRemove={handleRemovePdf}
+            />
+          ) : (
+            <FileUpload
+              accept=".pdf,application/pdf"
+              isUploading={isUploading}
+              error={uploadError ?? undefined}
+              onFileSelect={handlePdfUpload}
+              helperText="Upload your resume as a PDF file"
+              fullWidth
+              size="sm"
+            />
+          )}
+        </Section>
 
-              <div className="flex gap-3 pt-2">
-                <Button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? "Saving..." : "Save"}
-                </Button>
-                <Link to="/">
-                  <Button variant="outline" type="button">
-                    Cancel
-                  </Button>
-                </Link>
-              </div>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
+        <div className="flex gap-2.5 border-t border-border pt-6">
+          <Button type="submit" size="sm" disabled={isSubmitting} className="rounded-md">
+            {isSubmitting ? "Saving..." : "Save"}
+          </Button>
+          <Link to="/">
+            <Button variant="outline" size="sm" type="button" className="rounded-md border">
+              Cancel
+            </Button>
+          </Link>
+        </div>
+      </form>
+    </>
   );
 }

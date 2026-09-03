@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
 import { Spinner } from "@repo/ui/spinner";
 import AuthGate from "./components/AuthGate";
+import { AdminLayout } from "./components/AdminLayout";
 
 const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Projects = lazy(() => import("./pages/Projects"));
@@ -25,19 +26,21 @@ export default function App() {
           </div>
         }
       >
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/projects" element={<Projects />} />
-          <Route path="/projects/new" element={<ProjectCreate />} />
-          <Route path="/projects/:id" element={<ProjectDetail />} />
-          <Route path="/projects/:id/edit" element={<ProjectEdit />} />
-          <Route path="/resume" element={<Resume />} />
-          <Route path="/businesses" element={<Businesses />} />
-          <Route path="/businesses/new" element={<BusinessCreate />} />
-          <Route path="/businesses/:id" element={<BusinessDetail />} />
-          <Route path="/businesses/:id/edit" element={<BusinessEdit />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <AdminLayout>
+          <Routes>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/projects" element={<Projects />} />
+            <Route path="/projects/new" element={<ProjectCreate />} />
+            <Route path="/projects/:id" element={<ProjectDetail />} />
+            <Route path="/projects/:id/edit" element={<ProjectEdit />} />
+            <Route path="/resume" element={<Resume />} />
+            <Route path="/businesses" element={<Businesses />} />
+            <Route path="/businesses/new" element={<BusinessCreate />} />
+            <Route path="/businesses/:id" element={<BusinessDetail />} />
+            <Route path="/businesses/:id/edit" element={<BusinessEdit />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </AdminLayout>
       </Suspense>
     </AuthGate>
   );
