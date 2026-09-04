@@ -40,8 +40,8 @@ export default function BusinessDetail() {
     <>
       <BackLink to="/businesses">Businesses</BackLink>
 
-      <div className="flex items-start justify-between gap-6">
-        <div className="flex items-center gap-5">
+      <div className="flex flex-wrap items-start justify-between gap-4 sm:gap-6">
+        <div className="flex min-w-0 items-center gap-4 sm:gap-5">
           <div className="size-16 shrink-0 overflow-hidden rounded-2xl border border-border bg-background-secondary">
             {logoUrl && (
               <img
@@ -52,7 +52,7 @@ export default function BusinessDetail() {
             )}
           </div>
           <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <StatusPill on={business.active}>
                 {business.active ? "active" : "inactive"}
               </StatusPill>
@@ -83,7 +83,7 @@ export default function BusinessDetail() {
         </Link>
       </div>
 
-      <div className="grid grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] gap-10 border-t border-border pt-7">
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] md:gap-10 border-t border-border pt-7">
         <div className="flex flex-col gap-6">
           <p className="m-0 text-[17px] leading-relaxed text-pretty">
             {business.shortDescription}

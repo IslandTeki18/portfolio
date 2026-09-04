@@ -342,7 +342,7 @@ export default function ProjectEdit() {
               Gallery
             </span>
             {galleryUrls && galleryUrls.length > 0 && (
-              <div className="grid grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
                 {galleryUrls.map((item, index) =>
                   item.url ? (
                     <div key={item.storageId} className="relative">
@@ -402,7 +402,7 @@ export default function ProjectEdit() {
             fullWidth
             helperText="Comma-separated"
           />
-          <div className="grid grid-cols-2 gap-3.5">
+          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
             <Input
               {...register("liveUrl")}
               label="Live URL"
@@ -418,7 +418,7 @@ export default function ProjectEdit() {
               fullWidth
             />
           </div>
-          <div className="grid grid-cols-2 items-end gap-3.5">
+          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 sm:items-end">
             <Input
               {...register("sortOrder", { valueAsNumber: true })}
               label="Sort order"

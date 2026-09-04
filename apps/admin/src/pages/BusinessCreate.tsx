@@ -177,7 +177,7 @@ export default function BusinessCreate() {
             fullWidth
             helperText="Comma-separated"
           />
-          <div className="grid grid-cols-3 items-end gap-3.5">
+          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-3 sm:items-end">
             <Input
               {...register("sortOrder", { valueAsNumber: true })}
               label="Sort order"
@@ -190,7 +190,7 @@ export default function BusinessCreate() {
           </div>
         </Section>
 
-        <div className="flex gap-2.5 border-t border-border pt-6">
+        <div className="flex flex-wrap gap-2.5 border-t border-border pt-6">
           <Button type="submit" size="sm" disabled={isSubmitting || isUploading} className="rounded-md">
             {isSubmitting ? "Creating..." : "Create"}
           </Button>

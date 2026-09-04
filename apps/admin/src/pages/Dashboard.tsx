@@ -56,7 +56,7 @@ export default function Dashboard() {
   return (
     <>
       <div className="flex flex-col gap-2">
-        <h1 className="m-0 text-3xl font-semibold tracking-[-0.02em] text-pretty">
+        <h1 className="m-0 text-2xl font-semibold tracking-[-0.02em] text-pretty sm:text-3xl">
           {greeting(new Date().getHours())}
         </h1>
         <p className="m-0 text-base leading-relaxed text-muted-foreground">

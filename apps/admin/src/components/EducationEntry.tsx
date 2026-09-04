@@ -36,7 +36,7 @@ export function EducationEntry({
   const educationErrors = errors.education?.[index];
 
   return (
-    <div className="flex flex-col gap-3.5 border-l-2 border-input pl-5">
+    <div className="flex flex-col gap-3.5 border-l-2 border-input pl-4 sm:pl-5">
       <div className="flex items-center justify-between">
         <span className="font-mono text-xs text-label-secondary">
           School {index + 1}
@@ -44,7 +44,7 @@ export function EducationEntry({
         <RemoveButton onClick={onRemove} />
       </div>
 
-      <div className="grid grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)] gap-3.5">
+      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-[minmax(0,2fr)_minmax(0,2fr)_minmax(0,1fr)]">
         <Input
           {...register(`education.${index}.school`, {
             required: "School is required",

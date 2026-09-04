@@ -225,7 +225,7 @@ export default function Resume() {
         </Section>
 
 
-        <div className="flex gap-2.5 border-t border-border pt-6">
+        <div className="flex flex-wrap gap-2.5 border-t border-border pt-6">
           <Button type="submit" size="sm" disabled={isSubmitting} className="rounded-md">
             {isSubmitting ? "Saving..." : "Save"}
           </Button>

@@ -1,5 +1,11 @@
-import { forwardRef, type InputHTMLAttributes, type ReactNode } from "react";
-import { Link, NavLink } from "react-router-dom";
+import {
+  forwardRef,
+  useEffect,
+  useState,
+  type InputHTMLAttributes,
+  type ReactNode,
+} from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { SignOutButton } from "@clerk/clerk-react";
 import { cn } from "@repo/ui/lib/utils";
 
@@ -13,9 +19,70 @@ const NAV = [
 const siteUrl = import.meta.env.VITE_SITE_URL as string | undefined;
 
 export function AdminLayout({ children }: { children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const { pathname } = useLocation();
+
+  // Close the drawer whenever the route changes (mobile nav tap).
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  // Close on Escape and lock body scroll while the drawer is open.
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKey);
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prev;
+    };
+  }, [open]);
+
   return (
-    <div className="grid min-h-screen grid-cols-[220px_minmax(0,1fr)] bg-background-primary text-label-primary">
-      <aside className="sticky top-0 flex h-screen flex-col gap-7 border-r border-border px-4 py-7">
+    <div className="min-h-screen bg-background-primary text-label-primary md:grid md:grid-cols-[220px_minmax(0,1fr)]">
+      {/* Mobile top bar */}
+      <header className="sticky top-0 z-30 flex items-center justify-between border-b border-border bg-background-primary/95 px-4 py-3 backdrop-blur md:hidden">
+        <Link to="/" className="flex items-baseline gap-2">
+          <span className="text-[15px] font-semibold tracking-[-0.01em]">
+            Landon
+          </span>
+          <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-label-secondary">
+            Admin
+          </span>
+        </Link>
+        <button
+          type="button"
+          onClick={() => setOpen((v) => !v)}
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
+          aria-controls="admin-sidebar"
+          className="-mr-2 flex size-10 cursor-pointer items-center justify-center rounded-full text-label-primary transition-colors hover:bg-accent"
+        >
+          <MenuIcon open={open} />
+        </button>
+      </header>
+
+      {/* Backdrop (mobile only) */}
+      {open && (
+        <div
+          className="fixed inset-0 z-30 bg-black/50 md:hidden"
+          onClick={() => setOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
+      <aside
+        id="admin-sidebar"
+        className={cn(
+          "fixed inset-y-0 left-0 z-40 flex w-[260px] max-w-[85vw] flex-col gap-7 border-r border-border bg-background-primary px-4 py-7 transition-transform duration-200 ease-out",
+          "md:sticky md:top-0 md:h-screen md:w-auto md:max-w-none md:translate-x-0 md:transition-none",
+          open ? "translate-x-0" : "-translate-x-full",
+        )}
+      >
         <Link to="/" className="flex flex-col gap-1 px-3">
           <span className="text-[15px] font-semibold tracking-[-0.01em]">
             Landon
@@ -67,7 +134,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
           <SignOutButton>
             <button
               type="button"
-              className="text-[13px] text-muted-foreground transition-colors hover:text-label-primary"
+              className="cursor-pointer text-[13px] text-muted-foreground transition-colors hover:text-label-primary"
             >
               Sign out
             </button>
@@ -75,7 +142,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
         </div>
       </aside>
 
-      <main className="min-w-0 px-12 pt-14 pb-24">
+      <main className="min-w-0 px-5 pt-8 pb-16 sm:px-8 sm:pt-10 md:px-12 md:pt-14 md:pb-24">
         <div className="view-in mx-auto flex max-w-[720px] flex-col gap-8">
           {children}
         </div>
@@ -84,10 +151,38 @@ export function AdminLayout({ children }: { children: ReactNode }) {
   );
 }
 
+function MenuIcon({ open }: { open: boolean }) {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      aria-hidden="true"
+    >
+      {open ? (
+        <>
+          <path d="M4 4l12 12" />
+          <path d="M16 4L4 16" />
+        </>
+      ) : (
+        <>
+          <path d="M3 6h14" />
+          <path d="M3 10h14" />
+          <path d="M3 14h14" />
+        </>
+      )}
+    </svg>
+  );
+}
+
 /** Page-level h1. */
 export function PageTitle({ children }: { children: ReactNode }) {
   return (
-    <h1 className="m-0 text-3xl font-semibold tracking-[-0.02em] text-pretty">
+    <h1 className="m-0 text-2xl font-semibold tracking-[-0.02em] text-pretty sm:text-3xl">
       {children}
     </h1>
   );
@@ -102,7 +197,7 @@ export function PageHeader({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex items-end justify-between gap-4">
+    <div className="flex flex-wrap items-end justify-between gap-4">
       <PageTitle>{title}</PageTitle>
       {action}
     </div>
@@ -132,9 +227,9 @@ export function Section({
   children: ReactNode;
 }) {
   return (
-    <section className="grid grid-cols-[160px_minmax(0,1fr)] gap-6 border-t border-border pt-7">
+    <section className="grid grid-cols-1 gap-4 border-t border-border pt-6 md:grid-cols-[160px_minmax(0,1fr)] md:gap-6 md:pt-7">
       <div className="flex flex-col items-start gap-2.5">
-        <span className="pt-3 font-mono text-xs uppercase tracking-[0.06em] text-label-secondary">
+        <span className="font-mono text-xs uppercase tracking-[0.06em] text-label-secondary md:pt-3">
           {label}
         </span>
         {aside}
@@ -176,7 +271,7 @@ export function FeaturedTag() {
 /** Mono metadata strip at the bottom of a detail view. */
 export function MetaBar({ items }: { items: string[] }) {
   return (
-    <div className="flex flex-wrap gap-8 border-t border-border pt-5 font-mono text-xs text-label-secondary">
+    <div className="flex flex-wrap gap-x-6 gap-y-2 border-t md:gap-x-8 border-border pt-5 font-mono text-xs text-label-secondary">
       {items.map((item) => (
         <span key={item}>{item}</span>
       ))}

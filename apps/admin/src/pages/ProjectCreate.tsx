@@ -196,7 +196,7 @@ export default function ProjectCreate() {
               Gallery
             </span>
             {galleryUrls && galleryUrls.length > 0 && (
-              <div className="grid grid-cols-3 gap-2.5">
+              <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
                 {galleryUrls.map((item, index) =>
                   item.url ? (
                     <ImagePreview
@@ -240,7 +240,7 @@ export default function ProjectCreate() {
             fullWidth
             helperText="Comma-separated"
           />
-          <div className="grid grid-cols-2 gap-3.5">
+          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
             <Input
               {...register("liveUrl")}
               label="Live URL"
@@ -256,7 +256,7 @@ export default function ProjectCreate() {
               fullWidth
             />
           </div>
-          <div className="grid grid-cols-2 items-end gap-3.5">
+          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 sm:items-end">
             <Input
               {...register("sortOrder", { valueAsNumber: true })}
               label="Sort order"
@@ -271,7 +271,7 @@ export default function ProjectCreate() {
           </div>
         </Section>
 
-        <div className="flex gap-2.5 border-t border-border pt-6">
+        <div className="flex flex-wrap gap-2.5 border-t border-border pt-6">
           <Button
             type="submit"
             size="sm"

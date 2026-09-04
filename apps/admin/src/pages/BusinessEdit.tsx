@@ -260,7 +260,7 @@ export default function BusinessEdit() {
             fullWidth
             helperText="Comma-separated"
           />
-          <div className="grid grid-cols-3 items-end gap-3.5">
+          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-3 sm:items-end">
             <Input
               {...register("sortOrder", { valueAsNumber: true })}
               label="Sort order"
@@ -273,7 +273,7 @@ export default function BusinessEdit() {
           </div>
         </Section>
 
-        <div className="flex items-center justify-between gap-4 border-t border-border pt-6">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-6">
           <Button type="submit" size="sm" disabled={isSubmitting} className="rounded-md">
             {isSubmitting ? "Saving..." : "Save changes"}
           </Button>

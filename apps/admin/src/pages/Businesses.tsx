@@ -39,7 +39,7 @@ export default function Businesses() {
             <Link
               key={business._id}
               to={`/businesses/${business._id}`}
-              className="grid grid-cols-[28px_1fr_auto] items-start gap-4 border-b border-border px-1 py-5 transition-colors hover:bg-background-secondary"
+              className="grid grid-cols-[28px_minmax(0,1fr)_auto] items-start gap-3 sm:gap-4 border-b border-border px-1 py-5 transition-colors hover:bg-background-secondary"
             >
               <span className="pt-0.5 font-mono text-xs text-label-secondary">
                 {String(index + 1).padStart(2, "0")}

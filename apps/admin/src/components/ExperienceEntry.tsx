@@ -53,7 +53,7 @@ export function ExperienceEntry({
   const experienceErrors = errors.experience?.[index];
 
   return (
-    <div className="flex flex-col gap-3.5 border-l-2 border-primary pl-5">
+    <div className="flex flex-col gap-3.5 border-l-2 border-primary pl-4 sm:pl-5">
       <div className="flex items-center justify-between">
         <span className="font-mono text-xs text-label-secondary">
           Role {index + 1}
@@ -61,7 +61,7 @@ export function ExperienceEntry({
         <RemoveButton onClick={onRemove} />
       </div>
 
-      <div className="grid grid-cols-2 gap-3.5">
+      <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
         <Input
           {...register(`experience.${index}.company`, {
             required: "Company is required",
